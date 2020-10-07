@@ -1,0 +1,3 @@
+[submodule "dependencies/COST"]
+	path = dependencies/COST
+	url = git@github.com:frankmcsherry/COST.git
