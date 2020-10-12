@@ -22,3 +22,5 @@ done
 echo ""
 
 echo $(node_list)
+#launch spark master
+

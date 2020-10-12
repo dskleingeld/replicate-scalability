@@ -8,16 +8,17 @@ data/uk_2007_05_compressed:
 	&& wget http://data.law.di.unimi.it/webdata/uk-2007-05/uk-2007-05.graph \
 	&& mv uk-2007-05.graph uk-2007-05_compressed
 
-data/uk_2007_05_hilbert: data/uk-2007-05.graph rustup
-	cd data \
-	&&
+dependencies/spark/sbin/start-all.sh:
+	wget -O /tmp/spark-3.0.1-bin-hadoop2.7.tgz https://apache.newfountain.nl/spark/spark-3.0.1/spark-3.0.1-bin-hadoop2.7.tgz
+	tar zxf /tmp/spark-3.0.1-bin-hadoop2.7.tgz -C dependencies
+	mv dependencies/spark-3.0.1-bin-hadoop2.7 dependencies/spark
 
-
+setup: dependencies/spark/sbin/start-all.sh
 
 all:
-	data/twitter_rv
+	setup
 
-.PHONY: rustup
+.PHONY: rustup temp
 
 rustup:
 	ifeq (, $(shell which cargo))
