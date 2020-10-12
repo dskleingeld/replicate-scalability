@@ -13,17 +13,16 @@ dependencies/spark/sbin/start-all.sh:
 	tar zxf /tmp/spark-3.0.1-bin-hadoop2.7.tgz -C dependencies
 	mv dependencies/spark-3.0.1-bin-hadoop2.7 dependencies/spark
 
-setup: dependencies/spark/sbin/start-all.sh
-
 all:
-	setup
+	spark
 
-.PHONY: rustup temp
+.PHONY: rustup spark
+
+spark: dependencies/spark/sbin/start-all.sh
+	bash deploy/graphx_pagerank.sh
 
 rustup:
 	ifeq (, $(shell which cargo))
 	$(error "No cargo (rust compiler) in $(PATH), consider installing \"rustup: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh\"")
 	endif
 
-temp:
-	mkdir -p temp
