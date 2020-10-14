@@ -13,13 +13,20 @@ dependencies/spark/sbin/start-all.sh:
 	tar zxf /tmp/spark-3.0.1-bin-hadoop2.7.tgz -C dependencies
 	mv dependencies/spark-3.0.1-bin-hadoop2.7 dependencies/spark
 
+/tmp/replicating_cost/sbt/bin/sbt:
+	mkdir -p /tmp/replicating_cost/sbt
+	wget -O /tmp/replicating_cost/sbt.tgz https://github.com/sbt/sbt/releases/download/v1.4.0/sbt-1.4.0.tgz
+	tar zxf /tmp/replicating_cost/sbt.tgz -C /tmp/replicating_cost
+
+test: /tmp/replicating_cost/sbt/bin/sbt
+
 all:
-	spark
+	deploy
 
-.PHONY: rustup spark
-
-spark: dependencies/spark/sbin/start-all.sh
+deploy: dependencies/spark/sbin/start-all.sh
 	bash deploy/graphx_pagerank.sh
+
+.PHONY: rustup
 
 rustup:
 	ifeq (, $(shell which cargo))
