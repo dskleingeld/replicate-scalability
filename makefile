@@ -22,11 +22,17 @@ tmp/sbt/bin/sbt: | tmp
 	wget -O tmp/sbt.tgz https://github.com/sbt/sbt/releases/download/v1.4.0/sbt-1.4.0.tgz
 	tar zxf tmp/sbt.tgz -C tmp/
 
-something: tmp/sbt/bin/sbt
-	# cd src/spark/PageRank \
-	# && sbt
+src/spark/PageRank/pagerank.jar: tmp/sbt/bin/sbt
+	cd src/spark/PageRank \
+	&& java \
+		-Dsbt.ivy.home=tmp/.ivy2/ \
+		-Divy.home=tmp/.ivy2/ \
+		-jar ../../../tmp/sbt/bin/sbt-launch.jar \
+		package
+	mv src/spark/PageRank/target/scala-2.12/*.jar \
+		src/spark/PageRank/pagerank.jar
 
-test: something
+test: src/spark/PageRank/pagerank.jar
 	echo "done"
 
 all:
@@ -35,7 +41,7 @@ all:
 deploy: dependencies/spark/sbin/start-all.sh
 	bash deploy/graphx_pagerank.sh
 
-.PHONY: rustup datadir
+.PHONY: rustup deploy
 
 # these should both not be 'recreated' if the dir content changes
 # use order-only prerequisite (target: | prerequisite)
