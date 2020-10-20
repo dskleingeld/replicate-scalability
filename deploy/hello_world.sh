@@ -9,5 +9,5 @@ bash dependencies/spark/bin/spark-submit \
 	--class org.apache.spark.examples.PageRankExample \
 	--master $spark_url \
 	--deploy-mode cluster \
-	src/spark/PageRank/pagerank.jar
+	src/spark/HelloWorld/HelloWorld.jar
 	

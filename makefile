@@ -12,7 +12,9 @@ data/uk-2007-05.graph: | data
 data/uk-2007-05.properties: | data
 	wget -O $@ http://data.law.di.unimi.it/webdata/uk-2007-05/uk-2007-05.properties
 # convert the compressed graph to an edgelist
-data/uk-2007-05.graph-txt: data/uk-2007-05.graph data/uk-2007-05.properties dependencies/webgraph/webgraph.jar dependencies/jdk-15/bin/java
+data/uk-2007-05.graph-txt: data/uk-2007-05.graph data/uk-2007-05.properties
+data/uk-2007-05.graph-txt: dependencies/webgraph/webgraph.jar
+data/uk-2007-05.graph-txt: dependencies/jdk-15/bin/java
 	./dependencies/jdk-15/bin/java \
 		-classpath "dependencies/webgraph/*" \
 		it.unimi.dsi.webgraph.ASCIIGraph \
@@ -40,24 +42,44 @@ dependencies/jdk-15/bin/java: | tmp
 	wget -O tmp/openjdk.tar.gz https://download.java.net/java/GA/jdk15/779bf45e88a44cbd9ea6621d33e33db1/36/GPL/openjdk-15_linux-x64_bin.tar.gz
 	tar zxf tmp/openjdk.tar.gz -C dependencies/
 
+src/spark/PageRank/pagerank.jar: src/spark/PageRank/PageRank.scala
+src/spark/PageRank/pagerank.jar: src/spark/PageRank/build.sbt
 src/spark/PageRank/pagerank.jar: tmp/sbt/bin/sbt
 	cd src/spark/PageRank \
 	&& java \
 		-Dsbt.ivy.home=tmp/.ivy2/ \
 		-Divy.home=tmp/.ivy2/ \
 		-jar ../../../tmp/sbt/bin/sbt-launch.jar \
-		package
+		assembly
+		# package
 	mv src/spark/PageRank/target/scala-2.12/*.jar \
 		src/spark/PageRank/pagerank.jar
 
-test: data/uk-2007-05.graph-txt
+src/spark/HelloWorld/HelloWorld.jar: src/spark/HelloWorld/HelloWorld.scala
+src/spark/HelloWorld/HelloWorld.jar: src/spark/PageRank/build.sbt
+src/spark/HelloWorld/HelloWorld.jar: tmp/sbt/bin/sbt
+	cd src/spark/HelloWorld \
+	&& java \
+		-Dsbt.ivy.home=tmp/.ivy2/ \
+		-Divy.home=tmp/.ivy2/ \
+		-jar ../../../tmp/sbt/bin/sbt-launch.jar \
+		assembly
+		# package
+	mv src/spark/HelloWorld/target/scala-2.12/*.jar \
+		src/spark/HelloWorld/HelloWorld.jar
+
+test:
 	echo "done"
 
 all:
 	deploy
 
 deploy: dependencies/spark/sbin/start-all.sh
-	bash deploy/graphx_pagerank.sh
+deploy: src/spark/PageRank/pagerank.jar
+deploy: src/spark/HelloWorld/HelloWorld.jar
+deploy: data/uk-2007-05.graph-txt
+	bash deploy/hello_world.sh data/uk-2007-05.graph-txt
+	# bash deploy/graphx_pagerank.sh data/uk-2007-05.graph-txt
 
 .PHONY: rustup deploy
 
