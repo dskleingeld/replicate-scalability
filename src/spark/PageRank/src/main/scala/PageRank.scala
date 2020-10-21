@@ -17,22 +17,10 @@
  * limitations under the License.
  */
 
-// scalastyle:off println
-package org.apache.spark.examples.graphx
-
-// $example on$
 import org.apache.spark.graphx.GraphLoader
-// $example off$
 import org.apache.spark.sql.SparkSession
 
-/**
- * A PageRank example on social network dataset
- * Run with
- * {{{
- * bin/run-example graphx.PageRankExample
- * }}}
- */
-object PageRankExample {
+object PageRank {
   def main(args: Array[String]): Unit = {
     // Creates a SparkSession.
     val spark = SparkSession
@@ -44,7 +32,7 @@ object PageRankExample {
     // $example on$
     // Load the edges as a graph
     val edgeListPath = args(0)
-    println("edgeListPath")
+    println("edgeListPath: %s", edgeListPath)
     val graph = GraphLoader.edgeListFile(sc, edgeListPath)
     // Run PageRank
     val ranks = graph.pageRank(0.0001).vertices

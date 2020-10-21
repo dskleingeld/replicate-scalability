@@ -2,12 +2,14 @@
 
 source deploy/spark.sh
 
-spark_url=$(deploy_spark_cluster)
+graph="${PWD}/${1}"
 
+spark_url=$(deploy_spark_cluster)
 echo spark_url: $spark_url
+
 bash dependencies/spark/bin/spark-submit \
-	--class org.apache.spark.examples.PageRankExample \
+	--class PageRank \
 	--master $spark_url \
 	--deploy-mode cluster \
-	src/spark/PageRank/pagerank.jar
-	
+	src/spark/PageRank/pagerank.jar \
+	"${graph}"

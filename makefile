@@ -1,3 +1,11 @@
+#
+# $@ is a macro that refers to the target
+# $< is a macro that refers to the first dependency
+# basename -> $(basename src/foo.c src-1.0/bar hacks) 
+# produces 'src/foo src-1.0/bar hacks'
+# notdir -> $(notdir src/foo.c hacks)
+# produces ‘foo.c hacks’
+#
 # point this to a directory having at least 10GB of free space
 SCRATCH = /var/scratch/${USER}
 
@@ -19,6 +27,14 @@ data/uk-2007-05.graph-txt: dependencies/jdk-15/bin/java
 		-classpath "dependencies/webgraph/*" \
 		it.unimi.dsi.webgraph.ASCIIGraph \
 		$(basename $@) $(basename $@)
+	sed -i 1,1d $@ #remove header (first line)
+
+data/datagen-7_7-zf.zip: | data
+	wget -O $@ https://atlarge.ewi.tudelft.nl/graphalytics/zip/datagen-7_7-zf.zip
+data/datagen-7_7-zf.e: data/datagen-7_7-zf.zip
+	#unzip into the dir from the dependency the edges file
+	unzip -d data $< datagen-7_7-zf/datagen-7_7-zf.e
+	mv data/{datagen-7_7-zf/,}datagen-7_7-zf.e
 
 dependencies/webgraph/webgraph.jar: | tmp
 	mkdir -p $(dir $@)
@@ -42,7 +58,7 @@ dependencies/jdk-15/bin/java: | tmp
 	wget -O tmp/openjdk.tar.gz https://download.java.net/java/GA/jdk15/779bf45e88a44cbd9ea6621d33e33db1/36/GPL/openjdk-15_linux-x64_bin.tar.gz
 	tar zxf tmp/openjdk.tar.gz -C dependencies/
 
-src/spark/PageRank/pagerank.jar: src/spark/PageRank/PageRank.scala
+src/spark/PageRank/pagerank.jar: src/spark/PageRank/src/main/scala/PageRank.scala
 src/spark/PageRank/pagerank.jar: src/spark/PageRank/build.sbt
 src/spark/PageRank/pagerank.jar: tmp/sbt/bin/sbt
 	cd src/spark/PageRank \
@@ -77,7 +93,10 @@ all:
 deploy: dependencies/spark/sbin/start-all.sh
 deploy: src/spark/PageRank/pagerank.jar
 deploy: data/uk-2007-05.graph-txt
-	bash deploy/graphx_pagerank.sh data/uk-2007-05.graph-txt
+deploy: data/datagen-7_7-zf.e
+	# bash deploy/graphx_pagerank.sh data/uk-2007-05.graph-txt
+	# bash deploy/graphx_pagerank.sh data/followers.txt
+	bash deploy/graphx_pagerank.sh data/datagen-7_7-zf.e
 
 hello: dependencies/spark/sbin/start-all.sh
 hello: src/spark/HelloWorld/HelloWorld.jar
@@ -101,6 +120,7 @@ rustup:
 	$(error "No cargo (rust compiler) in $(PATH), consider installing \"rustup: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh\"")
 	endif
 
+# remove build artefacts and logs but leave downloaded data intact
 clean:
 	rm -f src/spark/HelloWorld/HalloWorld.jar
 	rm -f src/spark/PageRank/pagerank.jar
