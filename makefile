@@ -55,8 +55,8 @@ src/spark/PageRank/pagerank.jar: tmp/sbt/bin/sbt
 	mv src/spark/PageRank/target/scala-2.12/*.jar \
 		src/spark/PageRank/pagerank.jar
 
-src/spark/HelloWorld/HelloWorld.jar: src/spark/HelloWorld/HelloWorld.scala
-src/spark/HelloWorld/HelloWorld.jar: src/spark/PageRank/build.sbt
+src/spark/HelloWorld/HelloWorld.jar: src/spark/HelloWorld/src/main/scala/HelloWorld.scala
+src/spark/HelloWorld/HelloWorld.jar: src/spark/HelloWorld/build.sbt
 src/spark/HelloWorld/HelloWorld.jar: tmp/sbt/bin/sbt
 	cd src/spark/HelloWorld \
 	&& java \
@@ -76,12 +76,16 @@ all:
 
 deploy: dependencies/spark/sbin/start-all.sh
 deploy: src/spark/PageRank/pagerank.jar
-deploy: src/spark/HelloWorld/HelloWorld.jar
 deploy: data/uk-2007-05.graph-txt
-	bash deploy/hello_world.sh data/uk-2007-05.graph-txt
-	# bash deploy/graphx_pagerank.sh data/uk-2007-05.graph-txt
+	bash deploy/graphx_pagerank.sh data/uk-2007-05.graph-txt
 
-.PHONY: rustup deploy
+hello: dependencies/spark/sbin/start-all.sh
+hello: src/spark/HelloWorld/HelloWorld.jar
+hello: data/uk-2007-05.graph-txt
+	bash deploy/hello_world.sh data/uk-2007-05.graph-txt
+
+
+.PHONY: clean rustup deploy hello
 
 # these should both not be 'recreated' if the dir content changes
 # use order-only prerequisite (target: | prerequisite)
@@ -97,3 +101,7 @@ rustup:
 	$(error "No cargo (rust compiler) in $(PATH), consider installing \"rustup: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh\"")
 	endif
 
+clean:
+	rm -f src/spark/HelloWorld/HalloWorld.jar
+	rm -f src/spark/PageRank/pagerank.jar
+	rm -rf dependencies/spark/work/*
