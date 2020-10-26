@@ -15,10 +15,14 @@ object HelloWorld {
     println("************")
     println("Hello, world!")
     val rdd = spark.sparkContext.parallelize(Array(1 to 10))
+    println("************")
+    println("************")
+   
+    while(true){
+
+    }
     rdd.count()
-    println("************")
-    println("************")
-    
+
     // terminate spark context
     spark.stop()
     

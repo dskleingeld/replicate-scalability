@@ -11,5 +11,5 @@ bash dependencies/spark/bin/spark-submit \
 	--class PageRank \
 	--master $spark_url \
 	--deploy-mode cluster \
-	src/spark/PageRank/pagerank.jar \
+	src/spark/PageRank/PageRank.jar \
 	"${graph}"

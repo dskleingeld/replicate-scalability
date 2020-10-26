@@ -47,3 +47,28 @@ EOF
 
 	echo spark://${main}:${PORT}
 }
+
+if [ $# -lt 3 ] 
+then 
+	echo "usage spark.sh <path to graph> <path to jar> <class to run>"
+	exit 22
+fi
+
+if [ $# -eq 4 ] 
+then #hide logs from previous runs
+	(cd dependencies/spark/work \
+	&& for f in driver-*; do mv "${f}" ".${f}"; done)
+fi
+
+graph="${PWD}/${1}"
+jar="${PWD}/${2}"
+class=$3
+spark_url=$(deploy_spark_cluster 2 5)
+echo spark_url: $spark_url
+
+bash dependencies/spark/bin/spark-submit \
+	--class ${class} \
+	--master $spark_url \
+	--deploy-mode cluster \
+	"${jar}" \
+	"${graph}"

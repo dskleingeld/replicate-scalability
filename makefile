@@ -5,9 +5,14 @@
 # produces 'src/foo src-1.0/bar hacks'
 # notdir -> $(notdir src/foo.c hacks)
 # produces ‘foo.c hacks’
+# throughout here we use '|' any prerequisites following this are
+# order only, their target is not updated if they change
 #
 # point this to a directory having at least 10GB of free space
 SCRATCH = /var/scratch/${USER}
+
+all:
+	deploy
 
 data/twitter_rv.zip: | data
 	wget -O data/twitter_rv.zip http://an.kaist.ac.kr/~haewoon/release/twitter_social_graph/twitter_rv.zip
@@ -31,10 +36,11 @@ data/uk-2007-05.graph-txt: dependencies/jdk-15/bin/java
 
 data/datagen-7_7-zf.zip: | data
 	wget -O $@ https://atlarge.ewi.tudelft.nl/graphalytics/zip/datagen-7_7-zf.zip
-data/datagen-7_7-zf.e: data/datagen-7_7-zf.zip
-	#unzip into the dir from the dependency the edges file
+data/datagen-7_7-zf.e: | data/datagen-7_7-zf.zip
+	# unzip into the dir from the dependency the edges file
 	unzip -d data $< datagen-7_7-zf/datagen-7_7-zf.e
 	mv data/{datagen-7_7-zf/,}datagen-7_7-zf.e
+	rm data/datagen-7_7-zf.zip
 
 dependencies/webgraph/webgraph.jar: | tmp
 	mkdir -p $(dir $@)
@@ -58,9 +64,9 @@ dependencies/jdk-15/bin/java: | tmp
 	wget -O tmp/openjdk.tar.gz https://download.java.net/java/GA/jdk15/779bf45e88a44cbd9ea6621d33e33db1/36/GPL/openjdk-15_linux-x64_bin.tar.gz
 	tar zxf tmp/openjdk.tar.gz -C dependencies/
 
-src/spark/PageRank/pagerank.jar: src/spark/PageRank/src/main/scala/PageRank.scala
-src/spark/PageRank/pagerank.jar: src/spark/PageRank/build.sbt
-src/spark/PageRank/pagerank.jar: tmp/sbt/bin/sbt
+src/spark/PageRank/PageRank.jar: src/spark/PageRank/src/main/scala/PageRank.scala
+src/spark/PageRank/PageRank.jar: src/spark/PageRank/build.sbt
+src/spark/PageRank/PageRank.jar: tmp/sbt/bin/sbt
 	cd src/spark/PageRank \
 	&& java \
 		-Dsbt.ivy.home=tmp/.ivy2/ \
@@ -69,7 +75,22 @@ src/spark/PageRank/pagerank.jar: tmp/sbt/bin/sbt
 		assembly
 		# package
 	mv src/spark/PageRank/target/scala-2.12/*.jar \
-		src/spark/PageRank/pagerank.jar
+		src/spark/PageRank/PageRank.jar
+	rm -rf src/spark/PageRank/target
+
+src/spark/LabelProp/LabelProp.jar: src/spark/LabelProp/src/main/scala/LabelProp.scala
+src/spark/LabelProp/LabelProp.jar: src/spark/LabelProp/build.sbt
+src/spark/LabelProp/LabelProp.jar: tmp/sbt/bin/sbt
+	cd src/spark/LabelProp \
+	&& java \
+		-Dsbt.ivy.home=tmp/.ivy2/ \
+		-Divy.home=tmp/.ivy2/ \
+		-jar ../../../tmp/sbt/bin/sbt-launch.jar \
+		assembly
+		# package
+	mv src/spark/LabelProp/target/scala-2.12/*.jar \
+		src/spark/LabelProp/LabelProp.jar
+	rm -rf src/spark/LabelProp/target
 
 src/spark/HelloWorld/HelloWorld.jar: src/spark/HelloWorld/src/main/scala/HelloWorld.scala
 src/spark/HelloWorld/HelloWorld.jar: src/spark/HelloWorld/build.sbt
@@ -83,26 +104,21 @@ src/spark/HelloWorld/HelloWorld.jar: tmp/sbt/bin/sbt
 		# package
 	mv src/spark/HelloWorld/target/scala-2.12/*.jar \
 		src/spark/HelloWorld/HelloWorld.jar
-
-test:
-	echo "done"
-
-all:
-	deploy
+	rm -rf src/spark/HelloWorld/target
 
 deploy: dependencies/spark/sbin/start-all.sh
-deploy: src/spark/PageRank/pagerank.jar
-deploy: data/uk-2007-05.graph-txt
+deploy: src/spark/PageRank/PageRank.jar
+deploy: src/spark/LabelProp/LabelProp.jar
 deploy: data/datagen-7_7-zf.e
-	# bash deploy/graphx_pagerank.sh data/uk-2007-05.graph-txt
-	# bash deploy/graphx_pagerank.sh data/followers.txt
-	bash deploy/graphx_pagerank.sh data/datagen-7_7-zf.e
+deploy: data/uk-2007-05.graph-txt
+	# bash deploy/spark.sh data/datagen-7_7-zf.e src/spark/PageRank/PageRank.jar PageRank
+	# bash deploy/spark.sh data/datagen-7_7-zf.e src/spark/LabelProp/LabelProp.jar LabelProp wipe_logs
+	bash deploy/spark.sh data/followers.txt src/spark/LabelProp/LabelProp.jar LabelProp wipe_logs
 
 hello: dependencies/spark/sbin/start-all.sh
 hello: src/spark/HelloWorld/HelloWorld.jar
 hello: data/uk-2007-05.graph-txt
-	bash deploy/hello_world.sh data/uk-2007-05.graph-txt
-
+	bash deploy/spark.sh data/followers.txt src/spark/HelloWorld/HelloWorld.jar HelloWorld wipe_logs
 
 .PHONY: clean rustup deploy hello
 
@@ -123,5 +139,5 @@ rustup:
 # remove build artefacts and logs but leave downloaded data intact
 clean:
 	rm -f src/spark/HelloWorld/HalloWorld.jar
-	rm -f src/spark/PageRank/pagerank.jar
-	rm -rf dependencies/spark/work/*
+	rm -f src/spark/PageRank/PageRank.jar
+	rm -rf dependencies/spark/work/* # clear spark logs	
