@@ -13,8 +13,8 @@
 SCRATCH = /var/scratch/${USER}
 # when using cargo outside of this makefile you must
 # export these variables in the shell you are using
-export RUSTUP_HOME = ${PWD}/tmp/rustup
-export CARGO_HOME = ${PWD}/tmp/cargo
+export RUSTUP_HOME=${PWD}/tmp/rustup
+export CARGO_HOME=${PWD}/tmp/cargo
 
 all:
 	deploy
@@ -51,6 +51,15 @@ data/datagen-7_7-zf.e: | data/datagen-7_7-zf.zip
 	mv data/{datagen-7_7-zf/,}datagen-7_7-zf.e
 	rm data/datagen-7_7-zf.zip
 
+# TODO rewrite with pattern rule so this works on all data
+# will also produce .edges
+data/datagen-7_7-zf.nodes: data/datagen-7_7-zf.e tmp/cargo
+	tmp/cargo/bin/cargo run --manifest-path src/rust/Cargo.toml --release --bin to_vertex -- $< $(basename $@)
+
+# will also produce .lower
+data/datagen-7_7-zf.upper: data/datagen-7_7-zf.nodes tmp/cargo
+	tmp/cargo/bin/cargo run --manifest-path src/rust/Cargo.toml --release --bin to_hilbert -- $< $(basename $@)
+
 ############################################################################################################
 # Compilers and conversion tools
 ############################################################################################################
@@ -83,19 +92,17 @@ tmp/jdk-15/bin/java: | tmp
 	wget -O tmp/openjdk.tar.gz https://download.java.net/java/GA/jdk15/779bf45e88a44cbd9ea6621d33e33db1/36/GPL/openjdk-15_linux-x64_bin.tar.gz
 	tar zxf tmp/openjdk.tar.gz -C tmp/
 
-dependencies/COST/src:
-	git submodule init
-	git submodule update
-
-dependencies/COST/to_hilbert: tmp/cargo
-	$< --bin to_hilbert
-	
-dependencies/COST/to_vertex: tmp/cargo
-	$< --bin to_vertex
-
 ############################################################################################################
 # Experiment Executables
 ############################################################################################################
+
+src/rust/pagerank: tmp/cargo
+	$< --bin pagerank
+	mv src/rust/target/pagerank $@
+
+src/rust/label_prop: tmp/cargo
+	$< --bin pagerank
+	mv src/rust/target/label_prop $@
 
 src/spark/PageRank/PageRank.jar: src/spark/PageRank/src/main/scala/PageRank.scala
 src/spark/PageRank/PageRank.jar: src/spark/PageRank/build.sbt
@@ -139,12 +146,11 @@ src/spark/HelloWorld/HelloWorld.jar: tmp/sbt/bin/sbt
 		src/spark/HelloWorld/HelloWorld.jar
 	rm -rf src/spark/HelloWorld/target
 
-
 ############################################################################################################
 # Other
 ############################################################################################################
 
-.PHONY: clean deploy hello
+.PHONY: clean deploy hello cost
 
 deploy: dependencies/spark/sbin/start-all.sh
 deploy: src/spark/PageRank/PageRank.jar
@@ -160,6 +166,9 @@ hello: src/spark/HelloWorld/HelloWorld.jar
 hello: data/uk-2007-05.graph-txt
 	bash deploy/spark.sh data/followers.txt src/spark/HelloWorld/HelloWorld.jar HelloWorld wipe_logs
 
+cost: data/datagen-7_7-zf.nodes
+cost: tmp/cargo
+	tmp/cargo/bin/cargo run --manifest-path src/rust/Cargo.toml --release --bin pagerank -- hilbert $(basename $<)
 
 # these should both not be 'recreated' if the dir content changes
 # use order-only prerequisite (target: | prerequisite)
