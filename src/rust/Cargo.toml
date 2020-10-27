@@ -1,0 +1,11 @@
+[package]
+
+name = "COST"
+version = "0.0.1"
+authors = ["Frank McSherry <fmcsherry@me.com>"]
+
+[dependencies]
+docopt="*"
+byteorder="*"
+memmap="0.5"
+lz4="*"
