@@ -8,11 +8,20 @@
 # throughout here we use '|' any prerequisites following this are
 # order only, their target is not updated if they change
 #
+
 # point this to a directory having at least 10GB of free space
 SCRATCH = /var/scratch/${USER}
+# when using cargo outside of this makefile you must
+# export these variables in the shell you are using
+export RUSTUP_HOME = ${PWD}/tmp/rustup
+export CARGO_HOME = ${PWD}/tmp/cargo
 
 all:
 	deploy
+
+############################################################################################################
+# Data
+############################################################################################################
 
 data/twitter_rv.zip: | data
 	wget -O data/twitter_rv.zip http://an.kaist.ac.kr/~haewoon/release/twitter_social_graph/twitter_rv.zip
@@ -26,10 +35,10 @@ data/uk-2007-05.properties: | data
 	wget -O $@ http://data.law.di.unimi.it/webdata/uk-2007-05/uk-2007-05.properties
 # convert the compressed graph to an edgelist
 data/uk-2007-05.graph-txt: data/uk-2007-05.graph data/uk-2007-05.properties
-data/uk-2007-05.graph-txt: dependencies/webgraph/webgraph.jar
-data/uk-2007-05.graph-txt: dependencies/jdk-15/bin/java
-	./dependencies/jdk-15/bin/java \
-		-classpath "dependencies/webgraph/*" \
+data/uk-2007-05.graph-txt: tmp/webgraph/webgraph.jar
+data/uk-2007-05.graph-txt: tmp/jdk-15/bin/java
+	./tmp/jdk-15/bin/java \
+		-classpath "tmp/webgraph/*" \
 		it.unimi.dsi.webgraph.ASCIIGraph \
 		$(basename $@) $(basename $@)
 	sed -i 1,1d $@ #remove header (first line)
@@ -42,27 +51,51 @@ data/datagen-7_7-zf.e: | data/datagen-7_7-zf.zip
 	mv data/{datagen-7_7-zf/,}datagen-7_7-zf.e
 	rm data/datagen-7_7-zf.zip
 
-dependencies/webgraph/webgraph.jar: | tmp
+############################################################################################################
+# Compilers and conversion tools
+############################################################################################################
+
+tmp/webgraph/webgraph.jar: | tmp
 	mkdir -p $(dir $@)
 	wget -O tmp/webgraph-deps.tar.gz http://webgraph.di.unimi.it/webgraph-deps.tar.gz
 	tar zxf tmp/webgraph-deps.tar.gz -C dependencies/webgraph
 	rm tmp/webgraph-deps.tar.gz	
 	wget -O $@ https://search.maven.org/remotecontent?filepath=it/unimi/dsi/webgraph/3.6.5/webgraph-3.6.5.jar
 
-dependencies/spark/sbin/start-all.sh: | tmp
+tmp/spark/sbin/start-all.sh: | tmp
 	wget -O tmp/spark-3.0.1-bin-hadoop2.7.tgz https://apache.newfountain.nl/spark/spark-3.0.1/spark-3.0.1-bin-hadoop2.7.tgz
 	tar zxf tmp/spark-3.0.1-bin-hadoop2.7.tgz -C dependencies
 	mv dependencies/spark-3.0.1-bin-hadoop2.7 dependencies/spark
 	rm tmp/spark-3.0.1-bin-hadoop2.7.tgz
+
+tmp/cargo:
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs >> rustup.sh
+	chmod +x rustup.sh
+	bash rustup.sh -y --no-modify-path --profile minimal
+	rm rustup.sh
 
 tmp/sbt/bin/sbt: | tmp
 	wget -O tmp/sbt.tgz https://github.com/sbt/sbt/releases/download/v1.4.0/sbt-1.4.0.tgz
 	tar zxf tmp/sbt.tgz -C tmp/
 	rm tmp/sbt.tgz
 
-dependencies/jdk-15/bin/java: | tmp
+tmp/jdk-15/bin/java: | tmp
 	wget -O tmp/openjdk.tar.gz https://download.java.net/java/GA/jdk15/779bf45e88a44cbd9ea6621d33e33db1/36/GPL/openjdk-15_linux-x64_bin.tar.gz
-	tar zxf tmp/openjdk.tar.gz -C dependencies/
+	tar zxf tmp/openjdk.tar.gz -C tmp/
+
+dependencies/COST/src:
+	git submodule init
+	git submodule update
+
+dependencies/COST/to_hilbert: tmp/cargo
+	$< --bin to_hilbert
+	
+dependencies/COST/to_vertex: tmp/cargo
+	$< --bin to_vertex
+
+############################################################################################################
+# Experiment Executables
+############################################################################################################
 
 src/spark/PageRank/PageRank.jar: src/spark/PageRank/src/main/scala/PageRank.scala
 src/spark/PageRank/PageRank.jar: src/spark/PageRank/build.sbt
@@ -106,6 +139,13 @@ src/spark/HelloWorld/HelloWorld.jar: tmp/sbt/bin/sbt
 		src/spark/HelloWorld/HelloWorld.jar
 	rm -rf src/spark/HelloWorld/target
 
+
+############################################################################################################
+# Other
+############################################################################################################
+
+.PHONY: clean deploy hello
+
 deploy: dependencies/spark/sbin/start-all.sh
 deploy: src/spark/PageRank/PageRank.jar
 deploy: src/spark/LabelProp/LabelProp.jar
@@ -120,7 +160,6 @@ hello: src/spark/HelloWorld/HelloWorld.jar
 hello: data/uk-2007-05.graph-txt
 	bash deploy/spark.sh data/followers.txt src/spark/HelloWorld/HelloWorld.jar HelloWorld wipe_logs
 
-.PHONY: clean rustup deploy hello
 
 # these should both not be 'recreated' if the dir content changes
 # use order-only prerequisite (target: | prerequisite)
@@ -131,13 +170,9 @@ tmp:
 	mkdir -p ${SCRATCH}/tmp
 	ln -s ${SCRATCH}/tmp tmp
 
-rustup:
-	ifeq (, $(shell which cargo))
-	$(error "No cargo (rust compiler) in $(PATH), consider installing \"rustup: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh\"")
-	endif
-
 # remove build artefacts and logs but leave downloaded data intact
 clean:
 	rm -f src/spark/HelloWorld/HalloWorld.jar
 	rm -f src/spark/PageRank/PageRank.jar
+	rm -f src/spark/LabelProp/LabelProp.jar
 	rm -rf dependencies/spark/work/* # clear spark logs	

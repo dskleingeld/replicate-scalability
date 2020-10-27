@@ -44,3 +44,6 @@ src/spark/PageRank/.bsp
 src/spark/PageRank/.bsp/sbt.json
 src/spark/PageRank/.bsp/sbt.json
 *.jar
+dependencies/cargo
+dependencies/rustup
+dependencies/jdk-15
