@@ -47,6 +47,7 @@ object PageRank {
     // // Print the result
     // println(ranksByUsername.collect().mkString("\n"))
     // // $example off$
+    println("done")
     spark.stop()
   }
 }

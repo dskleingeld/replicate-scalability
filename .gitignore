@@ -47,3 +47,4 @@ src/spark/PageRank/.bsp/sbt.json
 dependencies/cargo
 dependencies/rustup
 dependencies/jdk-15
+src/rust/Cargo.lock

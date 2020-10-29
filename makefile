@@ -58,7 +58,7 @@ data/datagen-7_7-zf.nodes: data/datagen-7_7-zf.e tmp/cargo
 
 # will also produce .lower
 data/datagen-7_7-zf.upper: data/datagen-7_7-zf.nodes tmp/cargo
-	tmp/cargo/bin/cargo run --manifest-path src/rust/Cargo.toml --release --bin to_hilbert -- $< $(basename $@)
+	tmp/cargo/bin/cargo run --manifest-path src/rust/Cargo.toml --release --bin to_hilbert -- $(basename $@)
 
 ############################################################################################################
 # Compilers and conversion tools
@@ -96,13 +96,7 @@ tmp/jdk-15/bin/java: | tmp
 # Experiment Executables
 ############################################################################################################
 
-src/rust/pagerank: tmp/cargo
-	$< --bin pagerank
-	mv src/rust/target/pagerank $@
-
-src/rust/label_prop: tmp/cargo
-	$< --bin pagerank
-	mv src/rust/target/label_prop $@
+# note: the COST rust executables are generated on demand when they are used
 
 src/spark/PageRank/PageRank.jar: src/spark/PageRank/src/main/scala/PageRank.scala
 src/spark/PageRank/PageRank.jar: src/spark/PageRank/build.sbt
@@ -150,16 +144,18 @@ src/spark/HelloWorld/HelloWorld.jar: tmp/sbt/bin/sbt
 # Other
 ############################################################################################################
 
-.PHONY: clean deploy hello cost
+.PHONY: clean deploy hello cost test
+
+test: data/datagen-7_7-zf.nodes
+test: data/datagen-7_7-zf.upper
 
 deploy: dependencies/spark/sbin/start-all.sh
 deploy: src/spark/PageRank/PageRank.jar
 deploy: src/spark/LabelProp/LabelProp.jar
 deploy: data/datagen-7_7-zf.e
 deploy: data/uk-2007-05.graph-txt
-	# bash deploy/spark.sh data/datagen-7_7-zf.e src/spark/PageRank/PageRank.jar PageRank
-	# bash deploy/spark.sh data/datagen-7_7-zf.e src/spark/LabelProp/LabelProp.jar LabelProp wipe_logs
-	bash deploy/spark.sh data/followers.txt src/spark/LabelProp/LabelProp.jar LabelProp wipe_logs
+	# bash deploy/spark.sh data/followers.txt src/spark/LabelProp/LabelProp.jar LabelProp wipe_logs
+	bash deploy/spark.sh data/followers.txt src/spark/PageRank/PageRank.jar PageRank wipe_logs
 
 hello: dependencies/spark/sbin/start-all.sh
 hello: src/spark/HelloWorld/HelloWorld.jar
