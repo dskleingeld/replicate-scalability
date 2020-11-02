@@ -8,3 +8,65 @@ url = {https://www.usenix.org/conference/hotos15/workshop-program/presentation/m
 publisher = {{USENIX} Association},
 month = may,
 }
+
+@inproceedings{graphlab,
+author = {Gonzalez, Joseph E. and Low, Yucheng and Gu, Haijie and Bickson, Danny and Guestrin, Carlos},
+title = {PowerGraph: Distributed Graph-Parallel Computation on Natural Graphs},
+year = {2012},
+isbn = {9781931971966},
+publisher = {USENIX Association},
+address = {USA},
+abstract = {Large-scale graph-structured computation is central to tasks ranging from targeted advertising to natural language processing and has led to the development of several graph-parallel abstractions including Pregel and GraphLab. However, the natural graphs commonly found in the real-world have highly skewed power-law degree distributions, which challenge the assumptions made by these abstractions, limiting performance and scalability.In this paper, we characterize the challenges of computation on natural graphs in the context of existing graph-parallel abstractions. We then introduce the PowerGraph abstraction which exploits the internal structure of graph programs to address these challenges. Leveraging the PowerGraph abstraction we introduce a new approach to distributed graph placement and representation that exploits the structure of power-law graphs. We provide a detailed analysis and experimental evaluation comparing PowerGraph to two popular graph-parallel systems. Finally, we describe three different implementation strategies for PowerGraph and discuss their relative merits with empirical evaluations on large-scale real-world problems demonstrating order of magnitude gains.},
+booktitle = {Proceedings of the 10th USENIX Conference on Operating Systems Design and Implementation},
+pages = {17–30},
+numpages = {14},
+location = {Hollywood, CA, USA},
+series = {OSDI'12}
+}
+
+@inproceedings {graphx,
+author = {Joseph E. Gonzalez and Reynold S. Xin and Ankur Dave and Daniel Crankshaw and Michael J. Franklin and Ion Stoica},
+title = {GraphX: Graph Processing in a Distributed Dataflow Framework},
+booktitle = {11th {USENIX} Symposium on Operating Systems Design and Implementation ({OSDI} 14)},
+year = {2014},
+isbn = { 978-1-931971-16-4},
+address = {Broomfield, CO},
+pages = {599--613},
+url = {https://www.usenix.org/conference/osdi14/technical-sessions/presentation/gonzalez},
+publisher = {{USENIX} Association},
+month = oct,
+}
+
+@article{uk2007,
+author = {Boldi, Paolo and Santini, Massimo and Vigna, Sebastiano},
+title = {A Large Time-Aware Web Graph},
+year = {2008},
+issue_date = {December 2008},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {42},
+number = {2},
+issn = {0163-5840},
+url = {https://doi.org/10.1145/1480506.1480511},
+doi = {10.1145/1480506.1480511},
+abstract = {We describe the techniques developed to gather and distribute in a highly compressed, yet accessible, form a series of twelve snapshot of the .uk web domain. Ad hoc compression techniques made it possible to store the twelve snapshots using just 1:9 bits per link, with constant-time access to temporal information. Our collection makes it possible to study the temporal evolution link-based scores (e.g., PageRank), the growth of online communities, and in general time-dependent phenomena related to the link structure.},
+journal = {SIGIR Forum},
+month = nov,
+pages = {33–38},
+numpages = {6}
+}
+
+@inproceedings{twitter,
+author = {Kwak, Haewoon and Lee, Changhyun and Park, Hosung and Moon, Sue},
+title = {What is Twitter, a Social Network or a News Media?},
+year = {2010},
+isbn = {9781605587998},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+booktitle = {Proceedings of the 19th International Conference on World Wide Web},
+pages = {591–600},
+numpages = {10},
+keywords = {retweet, information diffusion, degree of separation, Twitter, homophily, online social network, influential, pagerank, reciprocity},
+location = {Raleigh, North Carolina, USA},
+series = {WWW '10}
+}
