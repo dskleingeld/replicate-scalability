@@ -1,0 +1,68 @@
+% \documentclass{article}
+\documentclass[lang=en, hanging-titles=true]{skrapport}
+
+\usepackage[backend=biber]{biblatex}
+\addbibresource{References.bib}
+
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref} %must load after hyperref
+\usepackage{graphicx} % allow embedded images
+  \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+  \graphicspath{{../figs/},{plotting/}} % set of paths to search for images
+\usepackage{ragged2e}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata, decorations.text}
+\usepackage{ctable}
+\usepackage{nicefrac}
+% \usepackage{float}
+\usepackage{subcaption}
+%   \captionsetup{compatibility=false}
+% \usepackage[toc,page]{appendix} %appendices with sections
+% \usepackage{amsmath}  % extended mathematics
+% \usepackage{booktabs} % book-quality tables
+% \usepackage{units}    % non-stacked fractions and better unit spacing
+% \usepackage{multicol} % multiple column layout facilities
+% \usepackage{lipsum}   % filler text
+% \usepackage{fancyvrb} % extended verbatim environments
+\usepackage{multicol} % multi column lists
+\graphicspath{{./images/}}
+
+
+\raggedright
+\colortheme{skdoc}
+\title{Replicating COST}
+\author[dskleingeld@gmail.com]{David Kleingeld}
+
+\begin{document}
+
+%\begin{titlepage}
+\maketitle
+\tableofcontents
+%\end{titlepage}
+
+\newpage
+% summary of cost, take from
+% what are we going to do?
+% choose experiments
+\section{Introduction} \label{into}
+\input{content/intro}
+% specifics on experiments
+\section{Experiments} \label{exp}
+\input{content/experiments}
+% compare scaling
+\section{Results} \label{res}
+\input{content/results}
+\section{Conclusion} \label{concl}
+\input{content/conclusion}
+
+\clearpage
+\appendix
+\section{Run Instructions}
+\section{Time table}
+%\input{content/run_instructions}
+\printbibliography
+
+\end{document}
+
+\pagestyle{scrheadings} % Show chapter titles as headings
+\cleardoublepage % Avoids problems with pdfbookmark

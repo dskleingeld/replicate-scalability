@@ -1,0 +1,19 @@
+Recent decades have seen the introduction of many very scalable systems. Most publications focus on this impressive scalability. That is the presented system performs far better as it is given more parallel compute ability. It is unknown how these systems compare to classical non distributed or even sequential implementations. Here I look at, and reproduce part of, the work of Frank McSherry, Michael Isard and Derek G. Murray \cite{189908}. They offer a new performance metric and survey a number of data-parallel systems.
+
+In their paper they look at the performance of graph processing systems compared to simple single-threaded implementations. The performance is expressed in the COST, the \textit{configuration that outperforms the best single-threaded implementation} where they wrote these single-threaded implementations. The authors warn their outcomes are not perfect nor fair however some concern must be raised because of the outcomes. They show their are systems for which the COST is infinite, no number of cores improves upon the best single-threaded implementation.
+
+There are three experiments or \textit{benchmarks} ran on these graph processing systems:
+
+\begin{multicols}{2}
+\begin{enumerate}
+	\item GraphChi 
+	\item Stratosphere
+	\item X-Stream
+	\item Spark
+	\item Giraph
+	\item GraphLab
+	\item GraphX
+\end{enumerate}
+\end{multicols}
+
+The first experiment is to run \texttt{PageRank} the second finding connected components using \texttt{label propagation}. The authors then note that label propagation is used for finding graph connectivity due to its scalability while its not a good choice for the problem. Therefore they introduce a third experiment, \texttt{Union-Find} with weighted union. In the next section (\cref{exp}) we will look closer at the \texttt{PageRank} and \texttt{label propagation} experiments and see if their design can be improved. Then in \cref{res} we see the results of reproducing these experiments for the \texttt{GraphX} platform. Finally we analyze these results and see if we achieved the same as the authors.
