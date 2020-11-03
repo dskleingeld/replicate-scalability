@@ -41,7 +41,6 @@ fn pagerank<G: EdgeMapper>(graph: &G, nodes: u32, alpha: f32) {
     graph.map_edges(|x, _| { deg[x as usize] += 1f32 });
 
     for _iteration in 0 .. 20 {
-        println!("Iteration {}:\t{:?}", _iteration, timer.elapsed());
         for node in 0 .. nodes {
             src[node as usize] = alpha * dst[node as usize] / deg[node as usize];
             dst[node as usize] = 1f32 - alpha;
@@ -52,4 +51,5 @@ fn pagerank<G: EdgeMapper>(graph: &G, nodes: u32, alpha: f32) {
         // UNSAFE:
         graph.map_edges(|x, y| { unsafe { *dst.get_unchecked_mut(y as usize) += *src.get_unchecked(x as usize); }});
     }
+    println!("done {:?}", timer.elapsed());
 }
