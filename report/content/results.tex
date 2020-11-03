@@ -2,4 +2,36 @@ The experiments where run on the DAS-5 cluster at Leiden University \cite{das5}.
 
 \subsection{PageRank}
 
-Single threaded \textit{Rust} application
+The single threaded \textit{Rust} implementation run time
+
+\ctable[
+	caption = My results for the single threaded Rust PageRank implementation ran on a Das5 Node,
+	label = tab:rust_pagerank,
+	pos = h,
+]{llcc}{}
+{
+\FL
+Graph Order & Source & \multicolumn{2}{c}{Mean Runtime $\pm$ standard deviation (s)}  \ML
+& & graphA & GraphB \ML
+Vertex  & Ram & 0 $\pm$ 0 & 0 $\pm$ 0 \NN
+  & SSD & 0 $\pm$ 0 & 0 $\pm$ 0 \NN
+Hilbert & Ram & 0 $\pm$ 0 & 0 $\pm$ 0 \NN
+ & SSD & 0 $\pm$ 0 & 0 $\pm$ 0 \NN
+}
+
+\ctable[
+	caption = The papers results for the single threaded Rust PageRank implementation, 
+	label = tab:rust_paper_pagerank,
+	pos = h,
+]{llcc}{}
+{
+\FL
+Graph Order & Source & \multicolumn{2}{c}{Runtime (s)}  \ML
+& & twitter & uk-2007-05 \ML
+Vertex  & Ram & 300 & 651 \NN
+  & SSD & 275 & - \NN
+Hilbert & Ram & 242 & 256 \NN
+ & SSD & 110 & - \NN
+}
+
+
