@@ -6,6 +6,7 @@
 
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref} %must load after hyperref
+\crefname{listing}{Program-code}{Program-codes} 
 \usepackage{graphicx} % allow embedded images
   \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
   \graphicspath{{../figs/},{plotting/}} % set of paths to search for images
@@ -25,6 +26,8 @@
 % \usepackage{lipsum}   % filler text
 % \usepackage{fancyvrb} % extended verbatim environments
 \usepackage{multicol} % multi column lists
+\usepackage{listings}
+\usepackage{content/listings-rust}
 \graphicspath{{./images/}}
 \newcommand\todo[1]{\textcolor{red}{#1}}
 

@@ -1,5 +1,32 @@
-Here we look closer at the \textit{PageRank} and \todo{other} experiment, first we detail the authors work before proposing an alternative approach. Both experiments where originally ran on two graphs, \textit{twitter\_rv} \cite{twitter} and \textit{uk-2007-05} \cite{uk2007}. However exact configuration of the platforms or the specification on which either parallel or single-threaded implementations where run are unknown. 
-The authors wrote their own implementation for both experiments in \textit{Rust}. Their implementation initially loaded the graphs edges in vertex order, loading all edges for one vertex before moving to the next. \textit{GraphLab} and \textit{GraphX} save on data exchange by partition the edges between workers without this requirement \cite{graphlab,graphx}. Thus a second implementation was tested for which the edges where pre ordered so cache behaviour is more favourable using Hilbert order.
+Here we look closer at the \textit{PageRank} and \todo{other} experiment, first we detail the authors work before proposing an alternative approach.
 
-\subsection{PageRank}
-The pagerank algorithm iteratively updates a rank for each vertex in a directed graph. Each iteration the rank is divided between a vertex neighbours. Then the vertex rank is updated to the sum of its neighbours with a dampening factor applied. It was the originally algorithm used by Google to rank a websites significance.
+\subsection{Original Design} \label{sec:hilbert}
+To determine the \textit{COST} a best in class single threaded implementation is needed. The authors wrote their own implementation for both experiments in \textit{Rust}. Their implementation initially loaded the graphs edges in vertex order, loading all edges for one vertex before moving to the next. \textit{GraphLab} and \textit{GraphX} save on data exchange by partition the edges between workers without this requirement \cite{graphlab,graphx}. To remove this disadvantage they wrote a second implementation was tested where the edges are pre ordered using Hilbert order improving cache coherency. They report the run time for both vertex orders.
+
+Both experiments where originally ran on two graphs, \textit{twitter\_rv} \cite{twitter} and \textit{uk-2007-05} \cite{uk2007}. For ease of replication I deviate and run on different graphs.
+
+\subsubsection{PageRank}
+The pagerank algorithm iteratively updates a rank for each vertex in a directed graph. Each iteration the rank is divided between a vertex neighbours. Then the vertex rank is updated to the sum of its neighbours with a dampening factor applied. It was the originally algorithm used by Google to rank a websites significance. For this experiment I use the authors \textit{PageRank} implementation (as seen below) for the single threaded pagerank. For \textit{GraphX} I call the pagerank function included in the platform.
+
+\begin{lstlisting}[caption={Rust, PageRank},language=Rust,numbers=left,breaklines=true, label={lst:pagerank}]
+fn PageRank20(graph: GraphIterator, alpha: f32) {
+	let mut a = Vec::from_elem(graph.nodes, 0f32);
+	let mut b = Vec::from_elem(graph.nodes, 0f32);
+	let mut d = Vec::from_elem(graph.nodes, 0u32);
+	
+	graph.map_edges(|x, y| { d[x] += 1; });
+	for iter in range(0u, 20u) {
+		for i in range(0u, graph.nodes) {
+			b[i] = alpha*a[i] / d[i];
+			a[i] = 1f32 - alpha;
+		}
+
+		graph.map_edges(|x, y| { a[y] += b[x]; });
+	}
+}
+\end{lstlisting}
+
+\subsection{Extension}
+The exact configuration of the platforms or the specification on which either parallel or single-threaded implementations where run are unknown. This could be an issue as the cores on which the single threaded code is ran could be significantly slower or faster then the used cluster. Here I run the single-threaded code on one of the compute nodes of the cluster on which \textit{GraphX} is run. The full specification of the used system is reported in \cref{res}.
+
+As described in \cref{sec:hilbert} the authors converted the vertex order before starting running one variant of their implementation. The conversion time is mentioned in the paper for the smaller of the graphs. For completion we include the conversion time for all the graphs. Further more it is unclear if measured times are averages or single data points, I try to improve upon this by running the experiments multiple times and reporting the standard deviation.
