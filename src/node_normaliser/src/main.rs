@@ -1,7 +1,7 @@
 use structopt::StructOpt;
 use std::path::PathBuf;
 use std::fs::File;
-use std::io::{BufWriter, BufReader, BufRead, Read, Write};
+use std::io::{BufWriter, BufReader, BufRead, Read, Write, Seek, SeekFrom};
 use std::collections::HashMap;
 
 #[derive(Debug, StructOpt)]
@@ -11,9 +11,9 @@ struct Opt {
     #[structopt(parse(from_os_str))]
     input_path: PathBuf, 
     
-    /// Output file, defaults to "input file".normalised
+    /// Output file
     #[structopt(parse(from_os_str))]
-    output_path: Option<PathBuf>, 
+    output_path: PathBuf, 
 }
 
 fn map_node_ids(reader: &mut BufReader<impl Read>) -> HashMap<u64, u32> {
@@ -33,17 +33,17 @@ fn map_node_ids(reader: &mut BufReader<impl Read>) -> HashMap<u64, u32> {
     ids
 }
 
-fn main() -> std::io::Result<()> {
-    let Opt{ mut input_path, output_path } = Opt::from_args();
+fn main() {
+    let Opt{ input_path, output_path } = Opt::from_args();
 
-    let f_in = File::open(&input_path)?;
-    let f_out = File::open(&output_path.unwrap_or_else(|| {
-            input_path.push(".normalised"); input_path
-    }))?;
+    let f_in = File::open(&input_path).unwrap();
+    let f_out = File::create(&output_path).unwrap();
     let mut reader = BufReader::new(f_in);
     let mut writer = BufWriter::new(f_out);
 
     let ids = map_node_ids(&mut reader);
+
+    reader.seek(SeekFrom::Start(0)).unwrap();
     for line in reader.lines()
         .map(|l| l.unwrap())
         .filter(|l| !l.starts_with('#')) {
@@ -55,7 +55,6 @@ fn main() -> std::io::Result<()> {
         
         let renamed_src = ids.get(&src).unwrap();
         let renamed_dst = ids.get(&dst).unwrap();
-        writer.write_fmt(format_args!("{} {} {}", renamed_src, renamed_dst, weight)).unwrap();
+        writer.write_fmt(format_args!("{} {} {}\n", renamed_src, renamed_dst, weight)).unwrap();
     }
-    Ok(())
 }

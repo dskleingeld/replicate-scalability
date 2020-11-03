@@ -243,12 +243,9 @@ impl<R: ::std::io::BufRead, RF: Fn() -> R> EdgeMapper for ReaderMapper<R, RF> {
         for readline in reader.lines() {
             let line = readline.ok().expect("read error");
             if !line.starts_with('#') {
-                dbg!(&line);
                 let mut elts = line[..].split_whitespace();
-                dbg!(&elts);
-                dbg!(std::u32::MAX);
-                let src: u32 = dbg!(elts.next().unwrap()).parse().ok().expect("malformed src");
-                let dst: u32 = dbg!(elts.next().unwrap()).parse().ok().expect("malformed dst");
+                let src: u32 = elts.next().unwrap().parse().ok().expect("malformed src");
+                let dst: u32 = elts.next().unwrap().parse().ok().expect("malformed dst");
                 action(src, dst);
             }
         }

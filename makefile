@@ -51,9 +51,11 @@ data/datagen-7_7-zf.e: | data/datagen-7_7-zf.zip
 	mv data/{datagen-7_7-zf/,}datagen-7_7-zf.e
 	rm data/datagen-7_7-zf.zip
 
-# TODO rewrite with pattern rule so this works on all data
+data/datagen-7_7-zf.u32e: data/datagen-7_7-zf.e tmp/cargo
+	tmp/cargo/bin/cargo run --manifest-path src/node_normaliser/Cargo.toml --release -- $< $@
+
 # will also produce .edges
-data/datagen-7_7-zf.nodes: data/datagen-7_7-zf.e tmp/cargo
+data/datagen-7_7-zf.nodes: data/datagen-7_7-zf.u32e tmp/cargo
 	tmp/cargo/bin/cargo run --manifest-path src/rust/Cargo.toml --release --bin to_vertex -- $< $(basename $@)
 
 # will also produce .lower
@@ -140,14 +142,24 @@ src/spark/HelloWorld/HelloWorld.jar: tmp/sbt/bin/sbt
 		src/spark/HelloWorld/HelloWorld.jar
 	rm -rf src/spark/HelloWorld/target
 
+src/rust/pagerank: tmp/cargo
+	tmp/cargo/bin/cargo build --manifest-path src/rust/Cargo.toml --release --bin pagerank
+	mv src/rust/{target/release/,}pagerank
+
+src/rust/stats: tmp/cargo
+	tmp/cargo/bin/cargo build --manifest-path src/rust/Cargo.toml --release --bin stats
+	mv src/rust/{target/release/,}stats
+
 ############################################################################################################
 # Other
 ############################################################################################################
 
 .PHONY: clean deploy hello cost test
 
-test: data/datagen-7_7-zf.nodes
-test: data/datagen-7_7-zf.upper
+stats: src/rust/stats
+stats: data/datagen-7_7-zf.nodes
+	src/rust/stats vertex data/datagen-7_7-zf
+
 
 deploy: dependencies/spark/sbin/start-all.sh
 deploy: src/spark/PageRank/PageRank.jar
@@ -162,12 +174,12 @@ hello: src/spark/HelloWorld/HelloWorld.jar
 hello: data/uk-2007-05.graph-txt
 	bash deploy/spark.sh data/followers.txt src/spark/HelloWorld/HelloWorld.jar HelloWorld wipe_logs
 
-cost: data/datagen-7_7-zf.nodes
-cost: tmp/cargo
-	tmp/cargo/bin/cargo run --manifest-path src/rust/Cargo.toml --release --bin pagerank -- hilbert $(basename $<)
+cost: experiments/pagerank/single-threaded.csv 
 
-experiments/pagerank/single-threaded.csv:
-	bash single-threaded.sh
+experiments/pagerank/single-threaded.csv: data/datagen-7_7-zf.nodes
+experiments/pagerank/single-threaded.csv: data/datagen-7_7-zf.upper
+experiments/pagerank/single-threaded.csv: src/rust/pagerank
+	bash experiments/pagerank/single-threaded.sh
 
 # these should both not be 'recreated' if the dir content changes
 # use order-only prerequisite (target: | prerequisite)
