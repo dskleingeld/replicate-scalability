@@ -166,6 +166,9 @@ cost: data/datagen-7_7-zf.nodes
 cost: tmp/cargo
 	tmp/cargo/bin/cargo run --manifest-path src/rust/Cargo.toml --release --bin pagerank -- hilbert $(basename $<)
 
+experiments/pagerank/single-threaded.csv:
+	bash single-threaded.sh
+
 # these should both not be 'recreated' if the dir content changes
 # use order-only prerequisite (target: | prerequisite)
 data:
