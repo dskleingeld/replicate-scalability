@@ -3,7 +3,7 @@
 # working dir should be the root of the project, (call this from there)
 JAR=src/spark/PageRank/PageRank.jar
 CLASS=PageRank
-RESERVATION_DUR=1
+RESERVATION_DUR=15
 CORES_PER_NODE=16
 USER="$(whoami)"
 
@@ -13,12 +13,18 @@ function move_data()
 {
 	DATASET=$1
 	echo "
-cd $PWD
+rm -rf /local/$USER
 mkdir -p /local/$USER
-cp {data,/local/$USER}/$DATASET
+cp {$PWD/data,/local/$USER}/$DATASET
 "
 }
 
+function min()
+{
+	echo $(($1<$2 ? $1 : $2))
+}
+
+# https://stackoverflow.com/questions/24622108/apache-spark-the-number-of-cores-vs-the-number-of-executors
 function submit()
 {
 	log4j_setting="-Dlog4j.configuration=file:${PWD}/log4j.properties"
@@ -26,9 +32,10 @@ function submit()
 
 	spark_url=$1
 	total_cores=$2 
+	cores_per_node=$(min $total_cores $CORES_PER_NODE)
 	dataset=/local/$USER/$3
 	echo "
-bash ${PWD}/dependencies/spark/bin/spark-submit \
+time bash ${PWD}/dependencies/spark/bin/spark-submit \
 	--class ${CLASS} \
 	--name test_please_work \
 	--master ${spark_url} \
@@ -37,12 +44,12 @@ bash ${PWD}/dependencies/spark/bin/spark-submit \
 	--num-executors 1000 \
 	--total-executor-cores ${total_cores} \
 	--executor-memory ${MEMORY_PER_NODE} \
-	--executor-cores ${CORES_PER_NODE} \
+	--executor-cores ${cores_per_node} \
 	--driver-cores 3 \
 	--driver-memory 4G \
 	--driver-java-options "${log4j_setting}" \
 	--conf "spark.executor.extraJavaOptions=${log4j_setting}" \
-	"${JAR}" \
+	"${PWD}/${JAR}" \
 	"${dataset}"
 "
 }
@@ -59,7 +66,7 @@ function div_round_up()
 # use u32 edge list as its smaller then the original and
 # we do not want to give spark a disadvantage
 DATASETS=( datagen-7_7-zf.u32e )
-TOTAL_CORES=( 1 ) #4 8 16 32 64 128 256
+TOTAL_CORES=( 2 ) #4 8 16 32 64 128 256
 for dataset in $DATASETS
 do
 	for total_cores in $TOTAL_CORES
@@ -73,13 +80,23 @@ do
 		out=$(deploy_spark_cluster $nodes $RESERVATION_DUR)
 		spark_url=$(echo $out | cut -d ' ' -f 1)
 		main=$(echo $out | cut -d ' ' -f 2)
+		workers=$(echo $out | cut -d ' ' -f 3-)
+
+		# move the data on all the workers to the 
+		# faster locally mounted /local
+		move_data_cmds=$(move_data $dataset)
+		for worker in $workers
+		do
+			#run ssh in parallel (fork)
+			(ssh $worker -t "$move_data_cmds") &
+		done
+		wait #wait until (subshells) ssh jobs are done
 
 		# create commands to run on master
-		move_data_cmds=$(move_data $dataset)
 		submit_cmd=$(submit $spark_url $total_cores $dataset)
-		commands=$(echo -e "${move_data_cmds}\n${submit_cmd}")
-		echo "$commands"
+		# commands=$(echo -e "${move_data_cmds}\n${submit_cmd}")
+		echo "$submit_cmd"
 
-		ssh $main -t "$commands"
+		ssh $main -t "$submit_cmd"
 	done
 done

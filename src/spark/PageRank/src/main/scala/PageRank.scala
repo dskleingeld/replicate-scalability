@@ -32,23 +32,11 @@ object PageRank {
     // $example on$
     // Load the edges as a graph
     val edgeListPath = args(0)
-    println("edgeListPath: %s", edgeListPath)
+    // println("edgeListPath: %s", edgeListPath)
     val graph = GraphLoader.edgeListFile(sc, edgeListPath)
-    // Run PageRank
+    // Run 20 PageRank iterations
     val ranks = graph.staticPageRank(20).vertices
-    // // Join the ranks with the usernames
-    // val users = sc.textFile("data/graphx/users.txt").map { line =>
-    //   val fields = line.split(",")
-    //   (fields(0).toLong, fields(1))
-    // }
-    // val ranksByUsername = users.join(ranks).map {
-    //   case (id, (username, rank)) => (username, rank)
-    // }
-    // // Print the result
-    // println(ranksByUsername.collect().mkString("\n"))
-    // // $example off$
-    println("done")
+    // println("done")
     spark.stop()
   }
 }
-// scalastyle:on println

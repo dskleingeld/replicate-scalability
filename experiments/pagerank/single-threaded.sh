@@ -17,8 +17,8 @@ do
 	cp {data,/local/$USER}/\$DATASET.nodes
 	cp {data,/local/$USER}/\$DATASET.edges
 
-	src/rust/pagerank vertex /local/$USER/\$DATASET 32791267
-	src/rust/pagerank hilbert /local/$USER/\$DATASET 32791267
+	time src/rust/pagerank vertex /local/$USER/\$DATASET 32791267
+	time src/rust/pagerank hilbert /local/$USER/\$DATASET 32791267
 done
 "
 

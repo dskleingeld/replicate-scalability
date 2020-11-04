@@ -23,43 +23,22 @@ all:
 # Data
 ############################################################################################################
 
-data/twitter_rv.zip: | data
-	wget -O data/twitter_rv.zip http://an.kaist.ac.kr/~haewoon/release/twitter_social_graph/twitter_rv.zip
-	unzip -d data data/twitter_rv.zip
-	rm data/twitter_rv.zip
-
-# these are in webgraph format
-data/uk-2007-05.graph: | data
-	wget -O $@ http://data.law.di.unimi.it/webdata/uk-2007-05/uk-2007-05.graph
-data/uk-2007-05.properties: | data
-	wget -O $@ http://data.law.di.unimi.it/webdata/uk-2007-05/uk-2007-05.properties
-# convert the compressed graph to an edgelist
-data/uk-2007-05.graph-txt: data/uk-2007-05.graph data/uk-2007-05.properties
-data/uk-2007-05.graph-txt: tmp/webgraph/webgraph.jar
-data/uk-2007-05.graph-txt: tmp/jdk-15/bin/java
-	./tmp/jdk-15/bin/java \
-		-classpath "tmp/webgraph/*" \
-		it.unimi.dsi.webgraph.ASCIIGraph \
-		$(basename $@) $(basename $@)
-	sed -i 1,1d $@ #remove header (first line)
-
 data/datagen-7_7-zf.zip: | data
 	wget -O $@ https://atlarge.ewi.tudelft.nl/graphalytics/zip/datagen-7_7-zf.zip
 data/datagen-7_7-zf.e: | data/datagen-7_7-zf.zip
 	# unzip into the dir from the dependency the edges file
-	unzip -d data $< datagen-7_7-zf/datagen-7_7-zf.e
-	mv data/{datagen-7_7-zf/,}datagen-7_7-zf.e
+	unzip -j data/datagen-7_7-zf.zip datagen-7_7-zf/datagen-7_7-zf.e -d data
 	rm data/datagen-7_7-zf.zip
 
-data/datagen-7_7-zf.u32e: data/datagen-7_7-zf.e tmp/cargo
+%.u32e: %.e tmp/cargo
 	tmp/cargo/bin/cargo run --manifest-path src/node_normaliser/Cargo.toml --release -- $< $@
 
 # will also produce .edges
-data/datagen-7_7-zf.nodes: data/datagen-7_7-zf.u32e tmp/cargo
+%.nodes: %.u32e tmp/cargo
 	tmp/cargo/bin/cargo run --manifest-path src/rust/Cargo.toml --release --bin to_vertex -- $< $(basename $@)
 
 # will also produce .lower
-data/datagen-7_7-zf.upper: data/datagen-7_7-zf.nodes tmp/cargo
+%.upper: %.nodes tmp/cargo
 	tmp/cargo/bin/cargo run --manifest-path src/rust/Cargo.toml --release --bin to_hilbert -- $(basename $@)
 
 ############################################################################################################
@@ -159,11 +138,6 @@ src/rust/stats: | tmp/cargo
 stats: src/rust/stats
 stats: data/datagen-7_7-zf.nodes
 	src/rust/stats vertex data/datagen-7_7-zf
-
-hello: dependencies/spark/sbin/start-all.sh
-hello: src/spark/HelloWorld/HelloWorld.jar
-hello: data/uk-2007-05.graph-txt
-	bash deploy/spark.sh data/followers.txt src/spark/HelloWorld/HelloWorld.jar HelloWorld wipe_logs
 
 # cost: experiments/pagerank/single-threaded.csv 
 cost: experiments/pagerank/scalable.csv

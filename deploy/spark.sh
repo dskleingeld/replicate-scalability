@@ -46,7 +46,6 @@ function deploy_spark_cluster()
 	#launch spark master
 	echo updating spark config file >&2
 	workers_ips=$(to_infiniband_ips $workers)
-	echo workers ips: $workers_ips >&2
 	workers_list=$(echo $workers_ips | tr " " "\n")
 	echo $workers_list > dependencies/spark/conf/slaves
 
@@ -54,6 +53,6 @@ function deploy_spark_cluster()
 		bash ${PWD}/dependencies/spark/sbin/start-all.sh
 EOF
 )
-	echo spark://${main}:${PORT} $main
+	echo spark://${main}:${PORT} $main $workers
 }
 
