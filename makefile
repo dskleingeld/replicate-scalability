@@ -23,12 +23,16 @@ all:
 # Data
 ############################################################################################################
 
+data/wiki-Talk.zip: | data
+	wget -O $@ https://atlarge.ewi.tudelft.nl/graphalytics/zip/wiki-Talk.zip
 data/datagen-7_7-zf.zip: | data
 	wget -O $@ https://atlarge.ewi.tudelft.nl/graphalytics/zip/datagen-7_7-zf.zip
-data/datagen-7_7-zf.e: | data/datagen-7_7-zf.zip
-	# unzip into the dir from the dependency the edges file
-	unzip -j data/datagen-7_7-zf.zip datagen-7_7-zf/datagen-7_7-zf.e -d data
-	rm data/datagen-7_7-zf.zip
+
+
+%.e: | %.zip
+	# unzip -j data/datagen-7_7-zf.zip datagen-7_7-zf/datagen-7_7-zf.e -d data/	
+	unzip -j $| $(basename $(notdir $@))/$(notdir $@) -d $(dir $@)
+	rm $|
 
 %.u32e: %.e tmp/cargo
 	tmp/cargo/bin/cargo run --manifest-path src/node_normaliser/Cargo.toml --release -- $< $@

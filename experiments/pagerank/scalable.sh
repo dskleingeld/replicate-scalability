@@ -80,22 +80,20 @@ do
 		out=$(deploy_spark_cluster $nodes $RESERVATION_DUR)
 		spark_url=$(echo $out | cut -d ' ' -f 1)
 		main=$(echo $out | cut -d ' ' -f 2)
-		workers=$(echo $out | cut -d ' ' -f 3-)
+		nodes=$(echo $out | cut -d ' ' -f 2-)
 
-		# move the data on all the workers to the 
+		# move the data on the master and all workers to the 
 		# faster locally mounted /local
 		move_data_cmds=$(move_data $dataset)
-		for worker in $workers
+		for node in $nodes
 		do
 			#run ssh in parallel (fork)
-			(ssh $worker -t "$move_data_cmds") &
+			(ssh $node -t "$move_data_cmds") &
 		done
 		wait #wait until (subshells) ssh jobs are done
 
 		# create commands to run on master
 		submit_cmd=$(submit $spark_url $total_cores $dataset)
-		# commands=$(echo -e "${move_data_cmds}\n${submit_cmd}")
-		echo "$submit_cmd"
 
 		ssh $main -t "$submit_cmd"
 	done
