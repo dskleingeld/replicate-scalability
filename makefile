@@ -16,6 +16,8 @@ SCRATCH = /var/scratch/${USER}
 export RUSTUP_HOME=${PWD}/tmp/rustup
 export CARGO_HOME=${PWD}/tmp/cargo
 
+DATASETS= wiki-Talk dota-league datagen-8_0-fb graph500-25 twitter_mpi
+
 all:
 	deploy
 
@@ -23,11 +25,15 @@ all:
 # Data
 ############################################################################################################
 
-data/wiki-Talk.zip: | data
-	wget -O $@ https://atlarge.ewi.tudelft.nl/graphalytics/zip/wiki-Talk.zip
-data/datagen-7_7-zf.zip: | data
-	wget -O $@ https://atlarge.ewi.tudelft.nl/graphalytics/zip/datagen-7_7-zf.zip
+# data/wiki-Talk.zip: | data
+# 	wget -O $@ https://atlarge.ewi.tudelft.nl/graphalytics/zip/wiki-Talk.zip
+# data/datagen-7_7-zf.zip: | data
+# 	wget -O $@ https://atlarge.ewi.tudelft.nl/graphalytics/zip/datagen-7_7-zf.zip
 
+# this works as long as we specify non implicit rules for all other
+# zip files as make uses implicit rules as a last resort
+%.zip: | data
+	wget -O $@ https://atlarge.ewi.tudelft.nl/graphalytics/zip/$(notdir $@)
 
 %.e: | %.zip
 	# unzip -j data/datagen-7_7-zf.zip datagen-7_7-zf/datagen-7_7-zf.e -d data/	
@@ -146,14 +152,14 @@ stats: data/datagen-7_7-zf.nodes
 # cost: experiments/pagerank/single-threaded.csv 
 cost: experiments/pagerank/scalable.csv
 
-experiments/pagerank/single-threaded.csv: data/datagen-7_7-zf.nodes
-experiments/pagerank/single-threaded.csv: data/datagen-7_7-zf.upper
+experiments/pagerank/single-threaded.csv: $(addsuffix .upper $DATASETS)
+experiments/pagerank/single-threaded.csv: $(addsuffix .nodes $DATASETS)
 experiments/pagerank/single-threaded.csv: src/rust/pagerank
-	bash experiments/pagerank/single-threaded.sh
+	bash experiments/pagerank/single-threaded.sh $DATASETS
 
-experiments/pagerank/scalable.csv: data/datagen-7_7-zf.u32e
+experiments/pagerank/single-threaded.csv: $(addsuffix .u32e $DATASETS)
 experiments/pagerank/scalable.csv: src/spark/PageRank/PageRank.jar
-	bash experiments/pagerank/scalable.sh
+	bash experiments/pagerank/scalable.sh $DATASETS
 
 # these should both not be 'recreated' if the dir content changes
 # use order-only prerequisite (target: | prerequisite)

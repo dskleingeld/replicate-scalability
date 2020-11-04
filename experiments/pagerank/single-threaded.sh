@@ -4,7 +4,7 @@
 
 USER="$(whoami)"
 RESERVATION_DUR=1
-DATASETS="datagen-7_7-zf datagen-7_7-zf"
+DATASETS=($@) #turn args into array
 
 REMOTE_SCRIPT="
 cd $PWD
