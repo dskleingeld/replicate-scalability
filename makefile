@@ -142,13 +142,13 @@ src/spark/HelloWorld/HelloWorld.jar: tmp/sbt/bin/sbt
 		src/spark/HelloWorld/HelloWorld.jar
 	rm -rf src/spark/HelloWorld/target
 
-src/rust/pagerank: tmp/cargo
+src/rust/pagerank: src/rust/src | tmp/cargo
 	tmp/cargo/bin/cargo build --manifest-path src/rust/Cargo.toml --release --bin pagerank
-	mv src/rust/{target/release/,}pagerank
+	ln -s ${PWD}/src/rust/{target/release/,}pagerank
 
-src/rust/stats: tmp/cargo
+src/rust/stats: | tmp/cargo
 	tmp/cargo/bin/cargo build --manifest-path src/rust/Cargo.toml --release --bin stats
-	mv src/rust/{target/release/,}stats
+	ln -s src/rust/{target/release/,}stats
 
 ############################################################################################################
 # Other
@@ -160,26 +160,22 @@ stats: src/rust/stats
 stats: data/datagen-7_7-zf.nodes
 	src/rust/stats vertex data/datagen-7_7-zf
 
-
-deploy: dependencies/spark/sbin/start-all.sh
-deploy: src/spark/PageRank/PageRank.jar
-deploy: src/spark/LabelProp/LabelProp.jar
-deploy: data/datagen-7_7-zf.e
-deploy: data/uk-2007-05.graph-txt
-	# bash deploy/spark.sh data/followers.txt src/spark/LabelProp/LabelProp.jar LabelProp wipe_logs
-	bash deploy/spark.sh data/followers.txt src/spark/PageRank/PageRank.jar PageRank wipe_logs
-
 hello: dependencies/spark/sbin/start-all.sh
 hello: src/spark/HelloWorld/HelloWorld.jar
 hello: data/uk-2007-05.graph-txt
 	bash deploy/spark.sh data/followers.txt src/spark/HelloWorld/HelloWorld.jar HelloWorld wipe_logs
 
-cost: experiments/pagerank/single-threaded.csv 
+# cost: experiments/pagerank/single-threaded.csv 
+cost: experiments/pagerank/scalable.csv
 
 experiments/pagerank/single-threaded.csv: data/datagen-7_7-zf.nodes
 experiments/pagerank/single-threaded.csv: data/datagen-7_7-zf.upper
 experiments/pagerank/single-threaded.csv: src/rust/pagerank
 	bash experiments/pagerank/single-threaded.sh
+
+experiments/pagerank/scalable.csv: data/datagen-7_7-zf.u32e
+experiments/pagerank/scalable.csv: src/spark/PageRank/PageRank.jar
+	bash experiments/pagerank/scalable.sh
 
 # these should both not be 'recreated' if the dir content changes
 # use order-only prerequisite (target: | prerequisite)

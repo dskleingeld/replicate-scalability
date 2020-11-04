@@ -29,4 +29,5 @@ node=$(node_list | cut -d ' ' -f 1)
 
 command=$(echo "${@}" | tail -n +2)
 echo connecting to $node >&2
-ssh $node -t "$command"
+result=$(ssh $node -t "$command")
+echo "${result}"

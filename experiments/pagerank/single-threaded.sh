@@ -22,5 +22,5 @@ do
 done
 "
 
-output=$(bash deploy/binary.sh $RESERVATION_DUR "$REMOTE_SCRIPT")
-echo output: $output
+out=$(bash deploy/binary.sh $RESERVATION_DUR "$REMOTE_SCRIPT")
+echo out: "${out}"
