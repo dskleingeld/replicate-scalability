@@ -1,4 +1,6 @@
-#
+MAKEFLAGS+="-j -l $(shell expr $(shell grep -c ^processor /proc/cpuinfo) / 3) "
+# use up to a third of the frontend running makefile jobs
+
 # $@ is a macro that refers to the target
 # $< is a macro that refers to the first dependency
 # basename -> $(basename src/foo.c src-1.0/bar hacks) 
@@ -17,6 +19,8 @@ export RUSTUP_HOME=${PWD}/tmp/rustup
 export CARGO_HOME=${PWD}/tmp/cargo
 
 DATASETS= wiki-Talk dota-league datagen-8_0-fb graph500-25 twitter_mpi
+# DATASETS= wiki-Talk dota-league # datagen-8_0-fb graph500-25 twitter_mpi
+DATA=$(addprefix data/, ${DATASETS})
 
 all:
 	deploy
@@ -25,22 +29,16 @@ all:
 # Data
 ############################################################################################################
 
-# data/wiki-Talk.zip: | data
-# 	wget -O $@ https://atlarge.ewi.tudelft.nl/graphalytics/zip/wiki-Talk.zip
-# data/datagen-7_7-zf.zip: | data
-# 	wget -O $@ https://atlarge.ewi.tudelft.nl/graphalytics/zip/datagen-7_7-zf.zip
-
 # this works as long as we specify non implicit rules for all other
 # zip files as make uses implicit rules as a last resort
 %.zip: | data
-	wget -O $@ https://atlarge.ewi.tudelft.nl/graphalytics/zip/$(notdir $@)
+	wget -q -O $@ https://atlarge.ewi.tudelft.nl/graphalytics/zip/$(notdir $@)
 
 %.e: | %.zip
 	# unzip -j data/datagen-7_7-zf.zip datagen-7_7-zf/datagen-7_7-zf.e -d data/	
 	unzip -j $| $(basename $(notdir $@))/$(notdir $@) -d $(dir $@)
-	rm $|
 
-%.u32e: %.e tmp/cargo
+%.u32e: %.e tmp/cargo src/node_normaliser/
 	tmp/cargo/bin/cargo run --manifest-path src/node_normaliser/Cargo.toml --release -- $< $@
 
 # will also produce .edges
@@ -131,13 +129,13 @@ src/spark/HelloWorld/HelloWorld.jar: tmp/sbt/bin/sbt
 		src/spark/HelloWorld/HelloWorld.jar
 	rm -rf src/spark/HelloWorld/target
 
-src/rust/pagerank: src/rust/src | tmp/cargo
+src/rust/pagerank: src/rust/src/bin/pagerank.rs | tmp/cargo
 	tmp/cargo/bin/cargo build --manifest-path src/rust/Cargo.toml --release --bin pagerank
-	ln -s ${PWD}/src/rust/{target/release/,}pagerank
+	ln -fs ${PWD}/src/rust/{target/release/,}pagerank
 
 src/rust/stats: | tmp/cargo
 	tmp/cargo/bin/cargo build --manifest-path src/rust/Cargo.toml --release --bin stats
-	ln -s src/rust/{target/release/,}stats
+	ln -fs src/rust/{target/release/,}stats
 
 ############################################################################################################
 # Other
@@ -149,17 +147,17 @@ stats: src/rust/stats
 stats: data/datagen-7_7-zf.nodes
 	src/rust/stats vertex data/datagen-7_7-zf
 
-# cost: experiments/pagerank/single-threaded.csv 
-cost: experiments/pagerank/scalable.csv
+cost: experiments/pagerank/single-threaded.csv 
+# cost: experiments/pagerank/scalable.csv
 
-experiments/pagerank/single-threaded.csv: $(addsuffix .upper $DATASETS)
-experiments/pagerank/single-threaded.csv: $(addsuffix .nodes $DATASETS)
+experiments/pagerank/single-threaded.csv: $(addsuffix .upper, ${DATA})
+experiments/pagerank/single-threaded.csv: $(addsuffix .nodes, ${DATA})
 experiments/pagerank/single-threaded.csv: src/rust/pagerank
-	bash experiments/pagerank/single-threaded.sh $DATASETS
+	bash experiments/pagerank/single-threaded.sh ${DATASETS}
 
-experiments/pagerank/single-threaded.csv: $(addsuffix .u32e $DATASETS)
+experiments/pagerank/scalable.csv: $(addsuffix .u32e, ${DATA})
 experiments/pagerank/scalable.csv: src/spark/PageRank/PageRank.jar
-	bash experiments/pagerank/scalable.sh $DATASETS
+	bash experiments/pagerank/scalable.sh ${DATASETS}
 
 # these should both not be 'recreated' if the dir content changes
 # use order-only prerequisite (target: | prerequisite)

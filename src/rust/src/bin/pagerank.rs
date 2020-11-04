@@ -32,13 +32,12 @@ fn main() {
 
 fn pagerank<G: EdgeMapper>(graph: &G, nodes: u32, alpha: f32) {
 
-    let timer = std::time::Instant::now();
-
     let mut src = vec![0f32; nodes as usize];
     let mut dst = vec![0f32; nodes as usize];
     let mut deg = vec![0f32; nodes as usize];
 
     graph.map_edges(|x, _| { deg[x as usize] += 1f32 });
+    let timer = std::time::Instant::now();
 
     for _iteration in 0 .. 20 {
         for node in 0 .. nodes {
@@ -51,5 +50,5 @@ fn pagerank<G: EdgeMapper>(graph: &G, nodes: u32, alpha: f32) {
         // UNSAFE:
         graph.map_edges(|x, y| { unsafe { *dst.get_unchecked_mut(y as usize) += *src.get_unchecked(x as usize); }});
     }
-    println!("done {:?}", timer.elapsed());
+    println!("excluding IO {:?}", timer.elapsed());
 }

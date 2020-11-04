@@ -51,7 +51,7 @@ fn main() {
         let mut elts = line[..].split_whitespace();
         let src: u64 = elts.next().unwrap().parse().ok().expect("malformed src");
         let dst: u64 = elts.next().unwrap().parse().ok().expect("malformed dst");
-        let weight: &str = elts.next().unwrap();
+        let weight: &str = elts.next().unwrap_or("1");
         
         let renamed_src = ids.get(&src).unwrap();
         let renamed_dst = ids.get(&dst).unwrap();
