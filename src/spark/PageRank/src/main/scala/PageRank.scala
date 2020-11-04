@@ -35,7 +35,7 @@ object PageRank {
     println("edgeListPath: %s", edgeListPath)
     val graph = GraphLoader.edgeListFile(sc, edgeListPath)
     // Run PageRank
-    val ranks = graph.pageRank(0.0001).vertices
+    val ranks = graph.staticPageRank(20).vertices
     // // Join the ranks with the usernames
     // val users = sc.textFile("data/graphx/users.txt").map { line =>
     //   val fields = line.split(",")
