@@ -18,9 +18,9 @@ SCRATCH = /var/scratch/${USER}
 export RUSTUP_HOME=${PWD}/tmp/rustup
 export CARGO_HOME=${PWD}/tmp/cargo
 
-# note adding twitter_mpi causes quota exceeded (uses > 100Gb)
-# DATASETS= wiki-Talk dota-league datagen-8_0-fb graph500-25 #twitter_mpi 
-DATASETS= dota-league datagen-8_0-fb graph500-25 #twitter_mpi 
+# note: adding twitter_mpi causes quota exceeded (uses > 100Gb)
+# note: adding graph500-25 already causes no space left on device during runs
+DATASETS= wiki-Talk dota-league datagen-8_0-fb #graph500-25 #twitter_mpi 
 DATA=$(addprefix data/, ${DATASETS})
 
 all:
@@ -86,7 +86,7 @@ tmp/jdk-15/bin/java: | tmp
 # Experiment Executables
 ############################################################################################################
 
-# note: the COST rust executables are generated on demand when they are used
+# note: the COST rust executables for conversion are generated on demand when they are used
 
 src/spark/PageRank/PageRank.jar: src/spark/PageRank/src/main/scala/PageRank.scala
 src/spark/PageRank/PageRank.jar: src/spark/PageRank/build.sbt
@@ -116,23 +116,13 @@ src/spark/LabelProp/LabelProp.jar: tmp/sbt/bin/sbt
 		src/spark/LabelProp/LabelProp.jar
 	rm -rf src/spark/LabelProp/target
 
-src/spark/HelloWorld/HelloWorld.jar: src/spark/HelloWorld/src/main/scala/HelloWorld.scala
-src/spark/HelloWorld/HelloWorld.jar: src/spark/HelloWorld/build.sbt
-src/spark/HelloWorld/HelloWorld.jar: tmp/sbt/bin/sbt
-	cd src/spark/HelloWorld \
-	&& java \
-		-Dsbt.ivy.home=tmp/.ivy2/ \
-		-Divy.home=tmp/.ivy2/ \
-		-jar ../../../tmp/sbt/bin/sbt-launch.jar \
-		assembly
-		# package
-	mv src/spark/HelloWorld/target/scala-2.12/*.jar \
-		src/spark/HelloWorld/HelloWorld.jar
-	rm -rf src/spark/HelloWorld/target
-
 src/rust/pagerank: src/rust/src/bin/pagerank.rs | tmp/cargo
 	tmp/cargo/bin/cargo build --manifest-path src/rust/Cargo.toml --release --bin pagerank
 	ln -fs ${PWD}/src/rust/{target/release/,}pagerank
+
+src/rust/label_prop: src/rust/src/bin/pagerank.rs | tmp/cargo
+	tmp/cargo/bin/cargo build --manifest-path src/rust/Cargo.toml --release --bin label_prop
+	ln -fs ${PWD}/src/rust/{target/release/,}label_prop
 
 src/rust/stats: | tmp/cargo
 	tmp/cargo/bin/cargo build --manifest-path src/rust/Cargo.toml --release --bin stats
@@ -142,11 +132,18 @@ src/rust/stats: | tmp/cargo
 # Other
 ############################################################################################################
 
-.PHONY: clean deploy hello cost test
+.PHONY: clean deploy hello cost test stats 
 
 stats: src/rust/stats
 stats: data/datagen-7_7-zf.nodes
 	src/rust/stats vertex data/datagen-7_7-zf
+
+test: data/wiki-Talk.u32e
+test: src/rust/label_prop
+test: src/spark/LabelProp/LabelProp.jar
+	# bash experiments/label_prop/single-threaded.sh wiki-Talk
+	bash experiments/label_prop/scalable.sh wiki-Talk
+
 
 # cost: experiments/pagerank/single-threaded.csv 
 cost: experiments/pagerank/scalable.csv

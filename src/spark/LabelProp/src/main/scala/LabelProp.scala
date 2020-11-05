@@ -37,7 +37,7 @@ object LabelProp {
     val graph = GraphLoader.edgeListFile(sc, edgeListPath)
     println("graph loaded")
     // Run LabelProp, second arg is max numb of iterations
-    val labels = LabelPropagation.run(graph, 1000)
+    val labels = LabelPropagation.run(graph, 1)
     println("test")
 
     // count non root labels
