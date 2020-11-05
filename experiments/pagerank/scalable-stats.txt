@@ -298,3 +298,72 @@ dataset: datagen-8_0-fb
 total_cores: 256
  2020-11-05 16:00:33 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
 70.21
+Thu Nov  5 17:20:49 CET 2020
+dataset: wiki-Talk
+total_cores: 2
+2020-11-05 17:21:25 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+53.09
+dataset: wiki-Talk
+total_cores: 4
+2020-11-05 17:22:26 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+50.44
+dataset: wiki-Talk
+total_cores: 8
+2020-11-05 17:23:24 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+37.91
+dataset: wiki-Talk
+total_cores: 16
+2020-11-05 17:24:10 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+39.29
+dataset: wiki-Talk
+total_cores: 32
+2020-11-05 17:24:57 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+39.38
+dataset: wiki-Talk
+total_cores: 64
+2020-11-05 17:33:46 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+44.75
+dataset: wiki-Talk
+total_cores: 128
+2020-11-05 17:34:40 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+38.37
+dataset: dota-league
+total_cores: 4
+2020-11-05 18:11:30 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+74.67
+dataset: dota-league
+total_cores: 8
+2020-11-05 18:12:53 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+57.57
+dataset: dota-league
+total_cores: 16
+2020-11-05 18:13:59 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+53.42
+dataset: dota-league
+total_cores: 32
+2020-11-05 18:15:01 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+44.30
+dataset: dota-league
+total_cores: 64
+2020-11-05 18:15:54 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+44.32
+dataset: dota-league
+total_cores: 128
+2020-11-05 18:16:48 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+45.47
+dataset: dota-league
+total_cores: 256
+2020-11-05 18:31:23 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+45.33
+dataset: datagen-8_0-fb
+total_cores: 2
+2020-11-05 18:32:19 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+584.31
+dataset: datagen-8_0-fb
+total_cores: 16
+2020-11-05 19:00:41 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+153.03
+dataset: datagen-8_0-fb
+total_cores: 32
+2020-11-05 19:03:23 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+156.72
