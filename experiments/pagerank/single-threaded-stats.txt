@@ -93,3 +93,69 @@ Thu Nov  5 12:19:14 CET 2020
 # excluding IO 120.908953322s
 # 121.85
 # hilbert
+Thu Nov  5 13:36:05 CET 2020
+dataset: wiki-Talk
+array_size: 5021410
+vertex
+excluding IO 1.034768995s
+1.05
+hilbert
+excluding IO 621.598938ms
+0.64
+dataset: dota-league
+array_size: 50870313
+vertex
+excluding IO 5.240353064s
+5.39
+hilbert
+excluding IO 3.901276577s
+4.10
+dataset: datagen-8_0-fb
+array_size: 107507376
+vertex
+excluding IO 20.718432422s
+20.98
+hilbert
+excluding IO 9.047832561s
+9.39
+dataset: graph500-25
+array_size: 523602831
+vertex
+excluding IO 122.135940442s
+122.92
+hilbert
+excluding IO 59.146275293s
+61.03
+Thu Nov  5 13:41:52 CET 2020
+dataset: wiki-Talk
+array_size: 5021410
+vertex
+excluding IO 890.428122ms
+0.90
+hilbert
+excluding IO 618.920467ms
+0.64
+dataset: dota-league
+array_size: 50870313
+vertex
+excluding IO 4.643354899s
+4.69
+hilbert
+excluding IO 3.567188175s
+3.81
+dataset: datagen-8_0-fb
+array_size: 107507376
+vertex
+excluding IO 16.061135956s
+16.30
+hilbert
+excluding IO 8.602753654s
+8.90
+dataset: graph500-25
+array_size: 523602831
+vertex
+excluding IO 194.844525446s
+196.22
+hilbert
+excluding IO 53.583593542s
+55.17
