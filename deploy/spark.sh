@@ -53,6 +53,6 @@ function deploy_spark_cluster()
 		bash ${PWD}/dependencies/spark/sbin/start-all.sh
 EOF
 )
-	echo spark://${main}:${PORT} $main $workers
+	echo $resv_numb spark://${main}:${PORT} $main $workers
 }
 

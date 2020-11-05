@@ -15,7 +15,7 @@ function move_data()
 	echo "
 rm -rf /local/$USER
 mkdir -p /local/$USER
-cp {$PWD/data,/local/$USER}/$DATASET
+cp {$PWD/data,/local/$USER}/$DATASET.u32e
 "
 }
 
@@ -68,21 +68,23 @@ function div_round_up()
 
 date >> experiments/pagerank/scalable-stats.txt
 DATASETS=( "$@" ) #turn args into array
-TOTAL_CORES=( 2 ) #4 8 16 32 64 128 256
-for dataset in $DATASETS
+TOTAL_CORES=( 2 4 8 16 32 64 128 256 )
+for dataset in ${DATASETS[@]}
 do
-	for total_cores in $TOTAL_CORES
+	for total_cores in ${TOTAL_CORES[@]}
 	do
 		# rounding up
 		nodes=$(div_round_up $total_cores $CORES_PER_NODE)
 		nodes=$(expr $nodes + 1) # separate node for the main
+		echo dataset: $dataset, total_cores: $total_cores
 		echo reserving $nodes nodes
 
 		# reserve and await cluster
 		out=$(deploy_spark_cluster $nodes $RESERVATION_DUR)
-		spark_url=$(echo $out | cut -d ' ' -f 1)
-		main=$(echo $out | cut -d ' ' -f 2)
-		nodes=$(echo $out | cut -d ' ' -f 2-)
+		id=$(echo $out | cut -d ' ' -f 1)
+		spark_url=$(echo $out | cut -d ' ' -f 2)
+		main=$(echo $out | cut -d ' ' -f 3)
+		nodes=$(echo $out | cut -d ' ' -f 3-)
 
 		# move the data on the master and all workers to the 
 		# faster locally mounted /local
@@ -99,6 +101,8 @@ do
 
 		out=$(ssh $main -t "$submit_cmd")
 		echo dataset: $dataset >> experiments/pagerank/scalable-stats.txt
+		echo total_cores: $total_cores >> experiments/pagerank/scalable-stats.txt
 		echo "$out" >> experiments/pagerank/scalable-stats.txt
+		preserve -c $id
 	done
 done

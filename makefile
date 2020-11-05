@@ -19,7 +19,8 @@ export RUSTUP_HOME=${PWD}/tmp/rustup
 export CARGO_HOME=${PWD}/tmp/cargo
 
 # note adding twitter_mpi causes quota exceeded (uses > 100Gb)
-DATASETS= wiki-Talk dota-league datagen-8_0-fb graph500-25 #twitter_mpi 
+# DATASETS= wiki-Talk dota-league datagen-8_0-fb graph500-25 #twitter_mpi 
+DATASETS= dota-league datagen-8_0-fb graph500-25 #twitter_mpi 
 DATA=$(addprefix data/, ${DATASETS})
 
 all:
@@ -147,8 +148,8 @@ stats: src/rust/stats
 stats: data/datagen-7_7-zf.nodes
 	src/rust/stats vertex data/datagen-7_7-zf
 
-cost: experiments/pagerank/single-threaded.csv 
-# cost: experiments/pagerank/scalable.csv
+# cost: experiments/pagerank/single-threaded.csv 
+cost: experiments/pagerank/scalable.csv
 
 experiments/pagerank/single-threaded.csv: $(addsuffix .upper, ${DATA})
 experiments/pagerank/single-threaded.csv: $(addsuffix .nodes, ${DATA})

@@ -3,7 +3,7 @@
 # working dir should be the root of the project, (call this from there)
 
 USER="$(whoami)"
-RESERVATION_DUR=2
+RESERVATION_DUR=5
 DATASETS=( "$@" ) #turn args into array
 # we use an array to make sure looping works if we have
 # a single item
