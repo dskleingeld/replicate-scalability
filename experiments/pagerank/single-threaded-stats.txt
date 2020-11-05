@@ -63,33 +63,33 @@ hilbert
 excluding IO 54.425106346s
 56.06
 Thu Nov  5 12:19:14 CET 2020
-dataset: wiki-Talk
-array_size: 5021410
-vertex
-excluding IO 908.129291ms
-0.92
-hilbert
-excluding IO 585.40722ms
-0.60
-dataset: dota-league
-array_size: 50870313
-vertex
-excluding IO 4.688710017s
-4.76
-hilbert
-excluding IO 3.59686494s
-3.71
-dataset: datagen-8_0-fb
-array_size: 107507376
-vertex
-excluding IO 16.79565033s
-17.06
-hilbert
-excluding IO 8.819214958s
-9.14
-dataset: graph500-25
-array_size: 523602831
-vertex
-excluding IO 120.908953322s
-121.85
-hilbert
+# dataset: wiki-Talk
+# array_size: 5021410
+# vertex
+# excluding IO 908.129291ms
+# 0.92
+# hilbert
+# excluding IO 585.40722ms
+# 0.60
+# dataset: dota-league
+# array_size: 50870313
+# vertex
+# excluding IO 4.688710017s
+# 4.76
+# hilbert
+# excluding IO 3.59686494s
+# 3.71
+# dataset: datagen-8_0-fb
+# array_size: 107507376
+# vertex
+# excluding IO 16.79565033s
+# 17.06
+# hilbert
+# excluding IO 8.819214958s
+# 9.14
+# dataset: graph500-25
+# array_size: 523602831
+# vertex
+# excluding IO 120.908953322s
+# 121.85
+# hilbert
