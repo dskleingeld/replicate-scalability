@@ -1,0 +1,95 @@
+dataset: wiki-Talk
+array_size: 5021410
+vertex
+excluding IO 912.225374ms
+0.92
+hilbert
+excluding IO 616.303835ms
+0.63
+dataset: dota-league
+array_size: 50870313
+vertex
+excluding IO 4.987383244s
+5.10
+hilbert
+excluding IO 3.883039391s
+4.09
+dataset: datagen-8_0-fb
+array_size: 107507376
+vertex
+excluding IO 18.747012012s
+18.95
+hilbert
+excluding IO 8.6033172s
+8.98
+dataset: graph500-25
+array_size: 523602831
+vertex
+excluding IO 126.551102282s
+127.65
+hilbert
+excluding IO 57.459701053s
+59.24
+dataset: wiki-Talk
+array_size: 5021410
+vertex
+excluding IO 928.709426ms
+0.94
+hilbert
+excluding IO 617.389823ms
+0.63
+dataset: dota-league
+array_size: 50870313
+vertex
+excluding IO 4.865580151s
+4.97
+hilbert
+excluding IO 3.900063929s
+4.03
+dataset: datagen-8_0-fb
+array_size: 107507376
+vertex
+excluding IO 15.616924087s
+15.81
+hilbert
+excluding IO 8.255834826s
+8.52
+dataset: graph500-25
+array_size: 523602831
+vertex
+excluding IO 123.735850302s
+124.62
+hilbert
+excluding IO 54.425106346s
+56.06
+Thu Nov  5 12:19:14 CET 2020
+dataset: wiki-Talk
+array_size: 5021410
+vertex
+excluding IO 908.129291ms
+0.92
+hilbert
+excluding IO 585.40722ms
+0.60
+dataset: dota-league
+array_size: 50870313
+vertex
+excluding IO 4.688710017s
+4.76
+hilbert
+excluding IO 3.59686494s
+3.71
+dataset: datagen-8_0-fb
+array_size: 107507376
+vertex
+excluding IO 16.79565033s
+17.06
+hilbert
+excluding IO 8.819214958s
+9.14
+dataset: graph500-25
+array_size: 523602831
+vertex
+excluding IO 120.908953322s
+121.85
+hilbert

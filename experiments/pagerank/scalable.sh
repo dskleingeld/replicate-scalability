@@ -33,9 +33,12 @@ function submit()
 	spark_url=$1
 	total_cores=$2 
 	cores_per_node=$(min $total_cores $CORES_PER_NODE)
-	dataset=/local/$USER/$3
+	# use u32 edge list as its smaller then the original and
+	# we do not want to give spark a disadvantage
+	dataset=/local/$USER/$3.u32e
 	echo "
-time bash ${PWD}/dependencies/spark/bin/spark-submit \
+{ /usr/bin/time -f %e \
+bash ${PWD}/dependencies/spark/bin/spark-submit \
 	--class ${CLASS} \
 	--name test_please_work \
 	--master ${spark_url} \
@@ -50,7 +53,7 @@ time bash ${PWD}/dependencies/spark/bin/spark-submit \
 	--driver-java-options "${log4j_setting}" \
 	--conf "spark.executor.extraJavaOptions=${log4j_setting}" \
 	"${PWD}/${JAR}" \
-	"${dataset}"
+	"${dataset}"; } 2>&1
 "
 }
 
@@ -63,9 +66,8 @@ function div_round_up()
 	expr $new_nom / $denom
 }
 
-# use u32 edge list as its smaller then the original and
-# we do not want to give spark a disadvantage
-DATASETS=( datagen-7_7-zf.u32e )
+date >> experiments/pagerank/scalable-stats.txt
+DATASETS=( "$@" ) #turn args into array
 TOTAL_CORES=( 2 ) #4 8 16 32 64 128 256
 for dataset in $DATASETS
 do
@@ -95,6 +97,8 @@ do
 		# create commands to run on master
 		submit_cmd=$(submit $spark_url $total_cores $dataset)
 
-		ssh $main -t "$submit_cmd"
+		out=$(ssh $main -t "$submit_cmd")
+		echo dataset: $dataset >> experiments/pagerank/scalable-stats.txt
+		echo "$out" >> experiments/pagerank/scalable-stats.txt
 	done
 done

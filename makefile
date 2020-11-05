@@ -18,8 +18,8 @@ SCRATCH = /var/scratch/${USER}
 export RUSTUP_HOME=${PWD}/tmp/rustup
 export CARGO_HOME=${PWD}/tmp/cargo
 
-DATASETS= wiki-Talk dota-league datagen-8_0-fb graph500-25 twitter_mpi
-# DATASETS= wiki-Talk dota-league # datagen-8_0-fb graph500-25 twitter_mpi
+# note adding twitter_mpi causes quota exceeded (uses > 100Gb)
+DATASETS= wiki-Talk dota-league datagen-8_0-fb graph500-25 #twitter_mpi 
 DATA=$(addprefix data/, ${DATASETS})
 
 all:

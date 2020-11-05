@@ -3,7 +3,7 @@
 # working dir should be the root of the project, (call this from there)
 
 USER="$(whoami)"
-RESERVATION_DUR=15
+RESERVATION_DUR=2
 DATASETS=( "$@" ) #turn args into array
 # we use an array to make sure looping works if we have
 # a single item
@@ -31,6 +31,7 @@ echo hilbert
 "
 }
 
+date >> experiments/pagerank/single-threaded-stats.txt
 for dataset in ${DATASETS[@]}
 do
 	COMMANDS=$(commands $dataset)
