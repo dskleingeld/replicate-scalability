@@ -20,7 +20,7 @@ export CARGO_HOME=${PWD}/tmp/cargo
 
 # note: adding twitter_mpi causes quota exceeded (uses > 100Gb)
 # note: adding graph500-25 already causes no space left on device during runs
-DATASETS= wiki-Talk dota-league datagen-8_0-fb #graph500-25 #twitter_mpi 
+DATASETS= wiki-Talk dota-league datagen-8_0-fb graph500-25 #twitter_mpi 
 # DATASETS= datagen-8_0-fb #graph500-25 #twitter_mpi 
 DATA=$(addprefix data/, ${DATASETS})
 
@@ -127,38 +127,47 @@ src/rust/label_prop: src/rust/src/bin/pagerank.rs | tmp/cargo
 
 src/rust/stats: | tmp/cargo
 	tmp/cargo/bin/cargo build --manifest-path src/rust/Cargo.toml --release --bin stats
-	ln -fs src/rust/{target/release/,}stats
+	ln -fs ${PWD}/src/rust/{target/release/,}stats
 
+src/rust/to_vertex: | tmp/cargo
+	tmp/cargo/bin/cargo build --manifest-path src/rust/Cargo.toml --release --bin to_vertex
+	ln -fs ${PWD}/src/rust/{target/release/,}to_vertex
+
+src/rust/to_hilbert: | tmp/cargo
+	tmp/cargo/bin/cargo build --manifest-path src/rust/Cargo.toml --release --bin to_hilbert
+	ln -fs ${PWD}/src/rust/{target/release/,}to_hilbert
 ############################################################################################################
 # Other
 ############################################################################################################
 
-.PHONY: clean deploy hello cost test stats 
+.PHONY: clean \
+	experiments/pagerank/single-threaded \
+	experiments/label_prop/single-threaded \
+	experiments/pagerank/scalable \
+	experiments/label_prop/scalable \
+	experiments/conversion
 
-stats: src/rust/stats
-stats: data/datagen-7_7-zf.nodes
-	src/rust/stats vertex data/datagen-7_7-zf
+experiments/conversion: $(addsuffix .u32e, ${DATA})
+experiments/conversion: src/rust/to_vertex
+experiments/conversion: src/rust/to_hilbert 
+	bash experiments/conversion/time.sh ${DATASETS}
 
-# cost: experiments/label_prop/single-threaded.csv
-# cost: experiments/pagerank/single-threaded.csv 
-cost: experiments/pagerank/scalable.csv
-
-experiments/pagerank/single-threaded.csv: $(addsuffix .upper, ${DATA})
-experiments/pagerank/single-threaded.csv: $(addsuffix .nodes, ${DATA})
-experiments/pagerank/single-threaded.csv: src/rust/pagerank
+experiments/pagerank/single-threaded: $(addsuffix .upper, ${DATA})
+experiments/pagerank/single-threaded: $(addsuffix .nodes, ${DATA})
+experiments/pagerank/single-threaded: src/rust/pagerank
 	bash experiments/pagerank/single-threaded.sh ${DATASETS}
 
-experiments/label_prop/single-threaded.csv: $(addsuffix .upper, ${DATA})
-experiments/label_prop/single-threaded.csv: $(addsuffix .nodes, ${DATA})
-experiments/label_prop/single-threaded.csv: src/rust/label_prop
+experiments/label_prop/single-threaded: $(addsuffix .upper, ${DATA})
+experiments/label_prop/single-threaded: $(addsuffix .nodes, ${DATA})
+experiments/label_prop/single-threaded: src/rust/label_prop
 	bash experiments/label_prop/single-threaded.sh ${DATASETS}
 
-experiments/pagerank/scalable.csv: $(addsuffix .u32e, ${DATA})
-experiments/pagerank/scalable.csv: src/spark/PageRank/PageRank.jar
+experiments/pagerank/scalable: $(addsuffix .u32e, ${DATA})
+experiments/pagerank/scalable: src/spark/PageRank/PageRank.jar
 	bash experiments/pagerank/scalable.sh ${DATASETS}
 
-experiments/label_prop/scalable.csv: $(addsuffix .u32e, ${DATA})
-experiments/label_prop/scalable.csv: src/spark/LabelProp/LabelProp.jar
+experiments/label_prop/scalable: $(addsuffix .u32e, ${DATA})
+experiments/label_prop/scalable: src/spark/LabelProp/LabelProp.jar
 	bash experiments/label_prop/scalable.sh ${DATASETS}
 
 # these should both not be 'recreated' if the dir content changes
