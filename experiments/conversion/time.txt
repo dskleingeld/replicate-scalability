@@ -1,0 +1,356 @@
+dataset: data/wiki-Talk
+Reservation 278249 cancelled
+cp: cannot stat ‘data/data/wiki-Talk.u32e’: No such file or directory
+thread 'main' panicked at 'error opening file', src/typedrw.rs:17:46
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+array_size:
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: data/dota-league
+Reservation 278250 cancelled
+cp: cannot stat ‘data/data/dota-league.u32e’: No such file or directory
+thread 'main' panicked at 'error opening file', src/typedrw.rs:17:46
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+array_size:
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: data/datagen-8_0-fb
+Reservation 278251 cancelled
+cp: cannot stat ‘data/data/datagen-8_0-fb.u32e’: No such file or directory
+thread 'main' panicked at 'error opening file', src/typedrw.rs:17:46
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+array_size:
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: data/graph500-25
+Reservation 278252 cancelled
+cp: cannot stat ‘data/data/graph500-25.u32e’: No such file or directory
+thread 'main' panicked at 'error opening file', src/typedrw.rs:17:46
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+array_size:
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: wiki-Talk
+Reservation 278253 cancelled
+thread 'main' panicked at 'error opening file', src/typedrw.rs:17:46
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+array_size:
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: dota-league
+Reservation 278254 cancelled
+thread 'main' panicked at 'error opening file', src/typedrw.rs:17:46
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+array_size:
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: datagen-8_0-fb
+Reservation 278255 cancelled
+thread 'main' panicked at 'error opening file', src/typedrw.rs:17:46
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+array_size:
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: graph500-25
+Reservation 278256 cancelled
+thread 'main' panicked at 'error opening file', src/typedrw.rs:17:46
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+array_size:
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: wiki-Talk
+Reservation 278257 cancelled
+thread 'main' panicked at 'error opening file', src/typedrw.rs:17:46
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+array_size:
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: dota-league
+Reservation 278258 cancelled
+thread 'main' panicked at 'error opening file', src/typedrw.rs:17:46
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+array_size:
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: datagen-8_0-fb
+Reservation 278259 cancelled
+thread 'main' panicked at 'error opening file', src/typedrw.rs:17:46
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+array_size:
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: graph500-25
+Reservation 278260 cancelled
+thread 'main' panicked at 'error opening file', src/typedrw.rs:17:46
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+array_size:
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: wiki-Talk
+Reservation 278261 cancelled
+wiki-Talk.u32e
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: dota-league
+Reservation 278262 cancelled
+dota-league.u32e
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: datagen-8_0-fb
+Reservation 278263 cancelled
+datagen-8_0-fb.u32e
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: graph500-25
+Reservation 278264 cancelled
+graph500-25.u32e
+vertex
+/usr/bin/time: cannot run src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run src/rust/to_hilbert: No such file or directory
+0.00
+dataset: wiki-Talk
+Reservation 278265 cancelled
+wiki-Talk.u32e
+vertex
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_hilbert: No such file or directory
+0.00
+dataset: dota-league
+Reservation 278266 cancelled
+dota-league.u32e
+vertex
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_hilbert: No such file or directory
+0.00
+dataset: datagen-8_0-fb
+Reservation 278267 cancelled
+datagen-8_0-fb.u32e
+vertex
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_hilbert: No such file or directory
+0.00
+dataset: graph500-25
+Reservation 278268 cancelled
+graph500-25.u32e
+vertex
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_hilbert: No such file or directory
+0.00
+dataset: wiki-Talk
+Reservation 278269 cancelled
+wiki-Talk.u32e
+vertex
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_hilbert: No such file or directory
+0.00
+dataset: dota-league
+Reservation 278270 cancelled
+dota-league.u32e
+vertex
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_hilbert: No such file or directory
+0.00
+dataset: datagen-8_0-fb
+Reservation 278271 cancelled
+datagen-8_0-fb.u32e
+vertex
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_hilbert: No such file or directory
+0.00
+dataset: graph500-25
+Reservation 278272 cancelled
+graph500-25.u32e
+vertex
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_vertex: No such file or directory
+0.00
+hilbert
+/usr/bin/time: cannot run /home/ddps2003/replicate-scalability/src/rust/to_hilbert: No such file or directory
+0.00
+dataset: wiki-Talk
+Reservation 278273 cancelled
+wiki-Talk.u32e
+vertex
+0.81
+hilbert
+0.71
+dataset: dota-league
+Reservation 278274 cancelled
+dota-league.u32e
+vertex
+5.67
+hilbert
+8.28
+dataset: datagen-8_0-fb
+Reservation 278275 cancelled
+datagen-8_0-fb.u32e
+vertex
+13.48
+hilbert
+16.29
+dataset: graph500-25
+Reservation 278276 cancelled
+graph500-25.u32e
+vertex
+68.65
+hilbert
+90.85
+dataset: wiki-Talk
+Reservation 278277 cancelled
+wiki-Talk.u32e
+vertex
+0.73
+hilbert
+0.75
+dataset: dota-league
+Reservation 278278 cancelled
+dota-league.u32e
+vertex
+5.68
+hilbert
+8.09
+dataset: datagen-8_0-fb
+Reservation 278279 cancelled
+datagen-8_0-fb.u32e
+vertex
+13.50
+hilbert
+16.17
+dataset: graph500-25
+Reservation 278280 cancelled
+graph500-25.u32e
+vertex
+68.66
+hilbert
+95.21
+dataset: wiki-Talk
+Reservation 278281 cancelled
+wiki-Talk.u32e
+vertex
+0.65
+hilbert
+0.69
+dataset: dota-league
+Reservation 278282 cancelled
+dota-league.u32e
+vertex
+5.66
+hilbert
+8.16
+dataset: datagen-8_0-fb
+Reservation 278283 cancelled
+datagen-8_0-fb.u32e
+vertex
+13.50
+hilbert
+16.21
+dataset: graph500-25
+Reservation 278284 cancelled
+graph500-25.u32e
+vertex
+69.33
+hilbert
+89.90
+dataset: wiki-Talk
+Reservation 278285 cancelled
+wiki-Talk.u32e
+vertex
+0.63
+hilbert
+0.70
+dataset: dota-league
+Reservation 278286 cancelled
+dota-league.u32e
+vertex
+5.69
+hilbert
+8.07
+dataset: datagen-8_0-fb
+Reservation 278287 cancelled
+datagen-8_0-fb.u32e
+vertex
+13.49
+hilbert
+16.11
+dataset: graph500-25
+Reservation 278288 cancelled
+graph500-25.u32e
+vertex
+69.21
+hilbert
+89.98
