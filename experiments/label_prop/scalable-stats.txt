@@ -398,3 +398,18 @@ graph loaded
 	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
 13.73
 Thu Nov  5 21:44:00 CET 2020
+dataset: wiki-Talk
+total_cores: 64
+2020-11-05 21:44:09 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+(edgeListPath: %s,/local/ddps2003/wiki-Talk.u32e)
+graph loaded
+dataset: wiki-Talk
+total_cores: 128
+2020-11-05 22:00:15 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+(edgeListPath: %s,/local/ddps2003/wiki-Talk.u32e)
+graph loaded
+dataset: wiki-Talk
+total_cores: 256
+2020-11-05 22:16:21 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+(edgeListPath: %s,/local/ddps2003/wiki-Talk.u32e)
+graph loaded
