@@ -77,7 +77,7 @@ do
 	do
 		# rounding up
 		numb_workers=$(div_round_up $total_cores $CORES_PER_NODE)
-		nodes=$(expr $nodes + 1) # separate node for the main
+		nodes=$(expr $numb_workers + 1) # separate node for the main
 		echo dataset: $dataset, total_cores: $total_cores
 		echo reserving $nodes nodes
 

@@ -65,7 +65,8 @@ tmp/webgraph/webgraph.jar: | tmp
 tmp/spark/sbin/start-all.sh: | tmp
 	wget -O tmp/spark-3.0.1-bin-hadoop2.7.tgz https://apache.newfountain.nl/spark/spark-3.0.1/spark-3.0.1-bin-hadoop2.7.tgz
 	tar zxf tmp/spark-3.0.1-bin-hadoop2.7.tgz -C dependencies
-	mv dependencies/spark-3.0.1-bin-hadoop2.7 dependencies/spark
+	rm -rf dependencies/spark
+	mv -f dependencies/spark-3.0.1-bin-hadoop2.7 dependencies/spark
 	rm tmp/spark-3.0.1-bin-hadoop2.7.tgz
 
 tmp/cargo:
@@ -164,10 +165,12 @@ experiments/label_prop/single-threaded: src/rust/label_prop
 
 experiments/pagerank/scalable: $(addsuffix .u32e, ${DATA})
 experiments/pagerank/scalable: src/spark/PageRank/PageRank.jar
+experiments/pagerank/scalable: | tmp/spark/sbin/start-all.sh
 	bash experiments/pagerank/scalable.sh ${DATASETS}
 
 experiments/label_prop/scalable: $(addsuffix .u32e, ${DATA})
 experiments/label_prop/scalable: src/spark/LabelProp/LabelProp.jar
+experiments/label_prop/scalable: | tmp/spark/sbin/start-all.sh
 	bash experiments/label_prop/scalable.sh ${DATASETS}
 
 # these should both not be 'recreated' if the dir content changes
