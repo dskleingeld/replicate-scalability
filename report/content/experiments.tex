@@ -6,6 +6,27 @@ To determine the \textit{COST} a best in class single threaded implementation is
 Both experiments where originally ran on two graphs, \textit{twitter\_rv} \cite{twitter} and \textit{uk-2007-05} \cite{uk2007}. For ease of replication I deviate and run on different graphs.
 
 \subsection{Implementation} \label{sec:hilbert}
+As mentioned I will be using different graphs for this replication, I pipeline for using the original graphs was set up however these graphs turned out to be to large to run with the available storage as they had to be converted to huge edge lists for the papers authors conversion program to process them.
+Instead I use graphs provided by LDBC Graphalytics \cite{graphs}. I properties of the graphs used are listed in \cref{graphprops}.
+
+\ctable[
+	caption = The graphs used throughout this reproduction sourced from \cite{graphs}, 
+	label = graphprops,
+	pos = h,
+]{llccc}{}
+{
+\FL
+			& wiki-Talk & dota-league & datagen-8\_0-fb & graph500-25 \ML
+edges       & 5,021,410 & 50,870,313  & 107,507,376     & 523,602,831 \NN
+vertices    & 2,394,385 & 61,170      & 1,706,561       & 17,062,472  \NN
+}
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{pagerank}
+  \caption{Runtime of the Spark static \textit{Pagerank} method against number of cores for three different graphs. Pagerank was ran for 20 iterations. Individual run times are indicated with dots.}
+  \label{fig:pagerank}
+\end{figure}
+
 \subsubsection{PageRank}
 The pagerank algorithm works by iteratively updating a rank for each vertex in a directed graph. Each iteration the rank is divided between a vertex neighbours. Then the vertex rank is updated to the sum of its neighbours with a dampening factor applied. It was the originally algorithm used by Google to rank a websites significance. For this experiment I use the authors \textit{PageRank} implementation for the single threaded part. For \textit{GraphX} a slightly modified version of the \textit{GraphX} pagerank example\footnote{https://github.com/apache/spark/blob/master/examples/src/main/scala/org/apache/spark /examples/graphx/PageRankExample.scala} written in scala is used. I remove all operations after the call to \textit{pageRank} and replace the \textit{pageRank} call with \textit{staticPageRank} given the argument to perform 20 iterations to match the authors single threaded implementation.
 
@@ -25,7 +46,7 @@ object LabelProp {
       .appName(s"${this.getClass.getSimpleName}")
       .getOrCreate()
     val sc = spark.sparkContext
-
+ 
     // $example on$
     // Load the edges as a graph
     val edgeListPath = args(0)
@@ -63,9 +84,10 @@ We vary the values determining the parallism only the memory is set to a fixed a
 \end{multicols}
 
 The number of executors is locked to the total number of cores in use, allow spark itself to determine the needed parallism. The number of cores is varyed from 2 to 256. Before deployment the needed data is moved to high speed ssd storage on the workers and driver. 
-Allocating nodes, moving the data and submitting the program via the spark submit script while timing its run is done through various shell scripts detailed in \cref{sec:howToRun}.
+Allocating nodes, moving the data and submitting the program via the spark submit script while timing its run is done through various shell scripts detailed in \cref{howToRun}.
 
 \subsection{Extension}
 The exact configuration of the platforms or the specification on which either parallel or single-threaded implementations where tested are unknown. This could be an issue as the cores on which the single threaded code was timed could be significantly slower or faster then the used cluster. The authors must have done this to illustrate how a laptop can be faster then a distributed solution for some problems and care must be taken. Here I adress this by running the single-threaded code on one of the compute nodes part of the cluster on which \textit{GraphX} is run. The full specification of the used system is reported in \cref{res}.
 
-As described in \cref{sec:hilbert} the authors converted the vertex order before starting running one variant of their implementation. The conversion time is mentioned in the paper for the smaller of the graphs. For completion we include the conversion time for all the graphs. Further more it is unclear if measured times are averages or single data points, I try to improve upon this by running the experiments multiple times and reporting the standard deviation.
+As described in \cref{sec:hilbert} the authors converted the vertex order before starting running one variant of their implementation. The conversion time is mentioned in the paper for the smaller of the graphs. For completion we include the conversion time for all the graphs. 
+Further more it is unclear if measured times mentioned throughout the paper are averages or single data points, I improve upon this by running the experiments multiple times and reporting the standard deviation next to the means.
