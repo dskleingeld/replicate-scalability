@@ -4,8 +4,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# sns.set_theme(style="ticks")
-sns.set_theme(style="whitegrid")
+# sns.set_theme(style="whitegrid")
 
 ###################################### SINGLE #######################################
 def str_to_sec(s: str) -> float:
@@ -61,18 +60,46 @@ while i < len(lines):
     i+=1
 
 data["datagen-8_0-fb"][2] = [0]
+print(pd.DataFrame.from_dict(data))
 
 df = defaultdict(list)
 for (dataset, measurements) in data.items():
     df["dataset"].append(dataset)
     for (cores, measurement) in measurements.items():
-        df[int(cores)].append(measurement[0])
+        df[int(cores)].append(measurement)
 
-tips = sns.load_dataset("tips")
+df2 = pd.DataFrame(columns=["dataset", "cores", "runtime"])
 df = pd.DataFrame.from_dict(df)
 df = df.melt(id_vars="dataset", var_name="cores", value_name="runtime")
-f, ax = plt.subplots(figsize=(7,6))
 
-#try sns.boxplot
-sns.stripplot(hue="dataset", x="cores", y="runtime", data=df)
+for row in map(lambda x: x[1], df.iterrows()):
+    values = [[row["dataset"], row["cores"], m] for m in row["runtime"]]
+    df3 = pd.DataFrame(values, columns=["dataset", "cores", "runtime"])
+    df2 = df2.append(df3,ignore_index=True)
+
+
+import matplotlib  as mpl
+mpl.rcParams["axes.formatter.useoffset"] = False
+
+# print(df2)
+plt.rcParams.update({'font.size': 16})
+f, ax = plt.subplots(figsize=(10,6))
+
+sns.stripplot(hue="dataset", x="cores", y="runtime", data=df2, size=4, linewidth=0)
+sns.boxplot(hue="dataset", x="cores", y="runtime", data=df2, whis=[0,100], width=.6, saturation=0.6, dodge=True)
+
+ax.xaxis.grid(True)
+ax.set(ylabel="")
+sns.despine(trim=True, left=True)
+plt.yscale('log')
+
+import matplotlib.ticker as mticker
+ax.get_yaxis().set_major_formatter(mticker.ScalarFormatter())
+ax.get_yaxis().get_major_formatter().set_scientific(False)
+ax.get_yaxis().set_minor_formatter(mticker.ScalarFormatter())
+ax.get_yaxis().get_minor_formatter().set_scientific(False)
+
+plt.legend(bbox_to_anchor=(1.01, 1),borderaxespad=0)
+plt.tight_layout()
+plt.savefig("../../report/images/pagerank.png")
 plt.show()

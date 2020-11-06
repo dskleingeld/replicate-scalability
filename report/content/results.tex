@@ -2,21 +2,21 @@ The experiments where run on the DAS-5 cluster at Leiden University \cite{das5}.
 
 \subsection{PageRank}
 
-The single threaded \textit{Rust} implementation run time
+The single threaded \textit{Rust} implementation run time is shown in \cref{tab:rust_pagerank} below it we see the original results in table \cref{tab:rust_paper_pagerank}. Then in \cref{fig:pagerank} we see the results of processing the graphs using spark. Note that graph \textit{graph500-25} is missing here, it could not be ran within the available 15 minutes compute time on the das5. 
 
 \ctable[
-	caption = My results for the single threaded Rust PageRank implementation ran on a Das5 Node,
+	caption = My results for the single threaded Rust PageRank implementation ran 4 times on a Das5 compute node,
 	label = tab:rust_pagerank,
 	pos = h,
-]{llcc}{}
+]{llcccc}{}
 {
 \FL
-Graph Order & Source & \multicolumn{2}{c}{Mean Runtime $\pm$ standard deviation (s)}  \ML
-& & graphA & GraphB \ML
-Vertex  & Ram & 0 $\pm$ 0 & 0 $\pm$ 0 \NN
-  & SSD & 0 $\pm$ 0 & 0 $\pm$ 0 \NN
-Hilbert & Ram & 0 $\pm$ 0 & 0 $\pm$ 0 \NN
- & SSD & 0 $\pm$ 0 & 0 $\pm$ 0 \NN
+Graph Order & Source & \multicolumn{4}{c}{Mean Runtime $\pm$ standard deviation (s)}  \ML
+            &        & wiki-Talk & dota-league & datagen-8\_0-fb & graph500-25 \ML
+Vertex      & Ram    & 0.94 $\pm$ 0.06 & 4.93 $\pm$ 0.25   & 17.79 $\pm$ 2.39     & 141.81 $\pm$ 35.40   \NN
+            & SSD    & 0.92 $\pm$ 0.05 & 4.98 $\pm$ 0.30   & 17.98 $\pm$ 2.28     & 142.83 $\pm$ 35.64   \NN
+Hilbert     & Ram    & 0.61 $\pm$ 0.00 & 3.81 $\pm$ 0.16   & 8.63 $\pm$ 0.32      & 56.15 $\pm$ 2.60   \NN
+            & SSD    & 0.60 $\pm$ 0.00 & 3.98 $\pm$ 0.30   & 8.90 $\pm$ 0.33      & 57.82 $\pm$ 2.75   \NN
 }
 
 \ctable[
@@ -27,11 +27,43 @@ Hilbert & Ram & 0 $\pm$ 0 & 0 $\pm$ 0 \NN
 {
 \FL
 Graph Order & Source & \multicolumn{2}{c}{Runtime (s)}  \ML
-& & twitter & uk-2007-05 \ML
-Vertex  & Ram & 300 & 651 \NN
-  & SSD & 275 & - \NN
-Hilbert & Ram & 242 & 256 \NN
- & SSD & 110 & - \NN
+            &        & twitter                              & uk-2007-05 \ML
+Vertex      & Ram    & 300                                  & 651 \NN
+            & SSD    & 275                                  & - \NN
+Hilbert     & Ram    & 242                                  & 256 \NN
+            & SSD    & 110                                  & - \NN
 }
 
+\begin{figure}
+  \includegraphics[width=\linewidth]{pagerank}
+  \caption{Runtime of the Spark static \textit{Pagerank} method against number of cores for three different graphs. Pagerank was ran for 20 iterations. Individual run times are indicated with dots.}
+  \label{fig:pagerank}
+\end{figure}
 
+\subsection{Label Propagation}
+The single threaded \textit{Rust} implementation run time is shown in \cref{tab:rust-labelprop} below it we see the original results in table \cref{tab:rust-paper-labelprop}. I have no runtime results for Label Propagation in Spark. Even the smallest non-trivial graph timed out. The implementation was trivial using the method \textit{LabelPropagation.run} and gives correct results after a long time for tiny test graphs with less then 100 nodes. 
+
+\ctable[
+	caption = My results for the single threaded Rust Label Propagation implementation ran 4 times on a Das5 compute node,
+	label = tab:rust-labelprop,
+	pos = h,
+]{llcccc}{}
+{
+\FL
+Graph Order & \multicolumn{4}{c}{Mean Runtime $\pm$ standard deviation (s)}  \ML
+            & wiki-Talk & dota-league & datagen-8\_0-fb & graph500-25 \ML
+Vertex      & 0.019 $\pm$ 0.011 & 0.75 $\pm$ 0.05   & 1.90 $\pm$ 0.02     & 42.18 $\pm$ 8.86   \NN
+Hilbert     & 0.018 $\pm$ 0.015 & 0.41 $\pm$ 0.01   & 1.31 $\pm$ 0.03      & 14.91 $\pm$ 2.20   \NN
+}
+
+\ctable[
+	caption = The papers results for the single threaded Rust Label Propagation implementation, 
+	label = tab:rust-paper-labelprop,
+	pos = h,
+]{llcc}{}
+{
+\FL
+Graph Order &  \multicolumn{2}{c}{Runtime (s)}  \ML
+            & twitter                              & uk-2007-05 \ML
+Hilbert     & 153                                  & 417 \NN
+}

@@ -1,28 +1,39 @@
-import sys
 from collections import defaultdict
+import re
 import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-def str_to_sec(s: str) -> float:
-    if s[-2:] == "ms":
-        return float(s[:-2])/1000
-    else:
-        return float(s[:-1])
-
-data = defaultdict(list)
-
-f = open(sys.argv[1])
+data = defaultdict(lambda: defaultdict(list) )
+f = open("single-threaded-stats.txt")
 lines = f.readlines()
 
 i = 0
-while i+6 < len(lines):
+key = None
+order = None
+time = None
+is_numb = re.compile('[0-9]+\.[0-9]+')
+while i < len(lines):
     if lines[i].startswith("dataset: "):
         key = lines[i][len("dataset: "):-1]
-        data[key+"_vertex_ram"].append( str_to_sec(lines[i+3][len("excluding IO "):-1]))
-        data[key+"_vertex_io"].append( float(lines[i+4][:-2]))
-        data[key+"_hilbert_ram"].append( str_to_sec(lines[i+6][len("excluding IO "):-1]))
-        data[key+"_hilbert_io"].append( float(lines[i+7][:-2]))
+    elif lines[i].startswith("vertex"):
+        order = "vertex"
+    elif lines[i].startswith("hilbert"):
+        order = "hilbert"
+    elif is_numb.match(lines[i]):
+        time = float(lines[i][:-1])
+
+    if key is not None and order is not None and time is not None:
+        data[key][order].append(time)
+        order = None
+        time = None
     i+=1
 
-print(data["wiki-Talk_hilbert_io"])
-df = pd.DataFrame.from_dict(data, orient='index')
-print(df.std(axis=1))
+# print(data["wiki-Talk"])
+df = pd.DataFrame.from_dict(data)
+df_mean = df.applymap(lambda x: np.mean(np.array(x)))
+df_std = df.applymap(lambda x: np.std(np.array(x)))
+print(df_mean)
+print(df_std)
+# print("samples: ", len(data["graph500-25_vertex_ram"]))
