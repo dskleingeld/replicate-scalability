@@ -1,0 +1,13 @@
+To run the implementation simply clone the git repository\footnote{https://github.com/dskleingeld/replicate-scalability} on a cluster which has preserve, bash, wget, make > 1.7, tar, curl and java 8. Then adjust the \textit{data} and \textit{tmp} targets at the end of the makefile to point to a (slow) directory where you can store more then 40 GB, exact usage depends on choice of graphs. In the scripts in the subfolders of the experiments folder change \textit{/local/\$USER} to path where you have high speed local storage on the clusters compute nodes. Optionally comment out the datasets you wish not to run experiments for at the top of the makefile removing them from the variable "DATASETS". Now the experiments can be run by asking make to build (make <target-name>) one of these targets:
+
+\begin{enumerate}
+	\item experiments/conversion
+	\item experiments/pagerank/single-threaded
+	\item experiments/label\_prop/single-threaded
+	\item experiments/pagerank/scalable
+	\item experiments/label\_prop/scalable
+\end{enumerate}
+
+These will then call a script in their experiment/<exp-name> folder to either deploy spark on your cluster or run a binary on one node of the cluster, timing the operations and writing the result (including any of the horribly spammy errors Spark might throw at you) to a file ending in "-stats.txt" in their folder. These files can be transformed into a beautiful plots and wonderful tables through the magic of python, using the file calc.py in their folder\footnote{with the exception of the conversion "experiment" the results of those will have to be picked from "time.txt" manually}. The "-stats.txt" files will have to be cleaned from any Spark errors and exceptions for this to work correctly. 
+
+Internally the experiment scripts shuffle data and call either deploy/binary.sh or deploy/spark.sh which take care of the deployment to the cluster. 

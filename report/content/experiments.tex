@@ -86,6 +86,8 @@ We vary the values determining the parallism only the memory is set to a fixed a
 The number of executors is locked to the total number of cores in use, allow spark itself to determine the needed parallism. The number of cores is varyed from 2 to 256. Before deployment the needed data is moved to high speed ssd storage on the workers and driver. 
 Allocating nodes, moving the data and submitting the program via the spark submit script while timing its run is done through various shell scripts detailed in \cref{howToRun}.
 
+The software versions used are: Spark 3.0.1 standalone which includes Hadoop 2.7, Scala 2.12.12 with spark-graphx\_2.12 version 3.0.1 and spark-sql version 3.0.1.
+
 \subsection{Extension}
 The exact configuration of the platforms or the specification on which either parallel or single-threaded implementations where tested are unknown. This could be an issue as the cores on which the single threaded code was timed could be significantly slower or faster then the used cluster. The authors must have done this to illustrate how a laptop can be faster then a distributed solution for some problems and care must be taken. Here I adress this by running the single-threaded code on one of the compute nodes part of the cluster on which \textit{GraphX} is run. The full specification of the used system is reported in \cref{res}.
 

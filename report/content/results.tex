@@ -57,12 +57,6 @@ Hilbert     & Ram    & 242                                  & 256 \NN
             & SSD    & 110                                  & - \NN
 }
 
-\begin{figure}
-  \includegraphics[width=\linewidth]{pagerank}
-  \caption{Runtime of the Spark static \textit{Pagerank} method against number of cores for three different graphs. Pagerank was ran for 20 iterations. Individual run times are indicated with dots.}
-  \label{fig:pagerank}
-\end{figure}
-
 \subsection{Label Propagation}
 The single threaded \textit{Rust} implementation run time is shown in \cref{tab:rust-labelprop} below it we see the original results in table \cref{tab:rust-paper-labelprop}. I have no runtime results for Label Propagation in Spark. Even the smallest non-trivial graph timed out. The implementation was trivial using the method \textit{LabelPropagation.run} and gives correct results after a long time for tiny test graphs with less then 100 nodes. 
 
