@@ -1,0 +1,264 @@
+Fri Nov  6 12:13:35 CET 2020
+dataset: wiki-Talk
+Reservation 278136 cancelled
+array_size: 5021410
+vertex
+iteration
+iteration
+iteration
+iteration
+iteration
+2391830 non-roots found
+0.21
+hilbert
+iteration
+iteration
+iteration
+iteration
+iteration
+2391830 non-roots found
+0.16
+dataset: dota-league
+Reservation 278137 cancelled
+array_size: 50870313
+vertex
+iteration
+iteration
+iteration
+61169 non-roots found
+0.75
+hilbert
+iteration
+iteration
+61169 non-roots found
+0.41
+dataset: datagen-8_0-fb
+Reservation 278138 cancelled
+array_size: 107507376
+vertex
+iteration
+iteration
+iteration
+1706560 non-roots found
+1.93
+hilbert
+iteration
+iteration
+iteration
+1706560 non-roots found
+1.37
+dataset: graph500-25
+Reservation 278139 cancelled
+array_size: 523602831
+vertex
+iteration
+iteration
+iteration
+iteration
+17056832 non-roots found
+48.93
+hilbert
+iteration
+iteration
+iteration
+iteration
+17056832 non-roots found
+16.19
+Fri Nov  6 12:15:02 CET 2020
+dataset: wiki-Talk
+Reservation 278140 cancelled
+array_size: 5021410
+vertex
+iteration
+iteration
+iteration
+iteration
+iteration
+2391830 non-roots found
+0.20
+hilbert
+iteration
+iteration
+iteration
+iteration
+iteration
+2391830 non-roots found
+0.17
+dataset: dota-league
+Reservation 278141 cancelled
+array_size: 50870313
+vertex
+iteration
+iteration
+iteration
+61169 non-roots found
+0.68
+hilbert
+iteration
+iteration
+61169 non-roots found
+0.43
+dataset: datagen-8_0-fb
+Reservation 278142 cancelled
+array_size: 107507376
+vertex
+iteration
+iteration
+iteration
+1706560 non-roots found
+1.89
+hilbert
+iteration
+iteration
+iteration
+1706560 non-roots found
+1.30
+dataset: graph500-25
+Reservation 278143 cancelled
+array_size: 523602831
+vertex
+iteration
+iteration
+iteration
+iteration
+17056832 non-roots found
+41.32
+hilbert
+iteration
+iteration
+iteration
+iteration
+17056832 non-roots found
+16.68
+Fri Nov  6 12:16:22 CET 2020
+dataset: wiki-Talk
+Reservation 278144 cancelled
+array_size: 5021410
+vertex
+iteration
+iteration
+iteration
+iteration
+iteration
+2391830 non-roots found
+0.20
+hilbert
+iteration
+iteration
+iteration
+iteration
+iteration
+2391830 non-roots found
+0.17
+dataset: dota-league
+Reservation 278145 cancelled
+array_size: 50870313
+vertex
+iteration
+iteration
+iteration
+61169 non-roots found
+0.81
+hilbert
+iteration
+iteration
+61169 non-roots found
+0.41
+dataset: datagen-8_0-fb
+Reservation 278146 cancelled
+array_size: 107507376
+vertex
+iteration
+iteration
+iteration
+1706560 non-roots found
+1.87
+hilbert
+iteration
+iteration
+iteration
+1706560 non-roots found
+1.29
+dataset: graph500-25
+Reservation 278147 cancelled
+array_size: 523602831
+vertex
+iteration
+iteration
+iteration
+iteration
+17056832 non-roots found
+28.05
+hilbert
+iteration
+iteration
+iteration
+iteration
+17056832 non-roots found
+11.15
+Fri Nov  6 12:17:19 CET 2020
+dataset: wiki-Talk
+Reservation 278148 cancelled
+array_size: 5021410
+vertex
+iteration
+iteration
+iteration
+iteration
+iteration
+2391830 non-roots found
+0.18
+hilbert
+iteration
+iteration
+iteration
+iteration
+iteration
+2391830 non-roots found
+0.20
+dataset: dota-league
+Reservation 278149 cancelled
+array_size: 50870313
+vertex
+iteration
+iteration
+iteration
+61169 non-roots found
+0.76
+hilbert
+iteration
+iteration
+61169 non-roots found
+0.40
+dataset: datagen-8_0-fb
+Reservation 278150 cancelled
+array_size: 107507376
+vertex
+iteration
+iteration
+iteration
+1706560 non-roots found
+1.92
+hilbert
+iteration
+iteration
+iteration
+1706560 non-roots found
+1.29
+dataset: graph500-25
+Reservation 278151 cancelled
+array_size: 523602831
+vertex
+iteration
+iteration
+iteration
+iteration
+17056832 non-roots found
+50.43
+hilbert
+iteration
+iteration
+iteration
+iteration
+17056832 non-roots found
+15.63
