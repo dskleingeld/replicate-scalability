@@ -4,7 +4,7 @@
 JAR=src/spark/PageRank/PageRank.jar
 CLASS=PageRank
 RESERVATION_DUR=15
-CORES_PER_NODE=16
+CORES_PER_NODE=32
 USER="$(whoami)"
 
 source deploy/spark.sh
@@ -76,7 +76,7 @@ do
 	for total_cores in ${TOTAL_CORES[@]}
 	do
 		# rounding up
-		nodes=$(div_round_up $total_cores $CORES_PER_NODE)
+		numb_workers=$(div_round_up $total_cores $CORES_PER_NODE)
 		nodes=$(expr $nodes + 1) # separate node for the main
 		echo dataset: $dataset, total_cores: $total_cores
 		echo reserving $nodes nodes
@@ -99,7 +99,6 @@ do
 		wait #wait until (subshells) ssh jobs are done
 
 		# create commands to run on master
-		numb_workers=$(expr $nodes - 1)
 		submit_cmd=$(submit $spark_url $total_cores $numb_workers $dataset)
 
 		out=$(ssh $main -t "$submit_cmd")
