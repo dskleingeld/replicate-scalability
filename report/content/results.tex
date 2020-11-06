@@ -1,26 +1,49 @@
-The experiments where run on the DAS-5 cluster at Leiden University \cite{das5}. The cluster consists of 24 nodes each with dual eight core Xeon E5-2630v3 cpu's and 64 GB of memory. The nodes communicate by FDR Infiniband interconnects. Here I present the authors results and mine, as the systems and graphs used are not the same we focus on the ratios between the results. Here we present the two replicated experiments separately before drawing a general conclusion in the next section \cref{conl}.
+The experiments where run on the DAS-5 cluster at Leiden University \cite{das5}. The cluster consists of 24 nodes each with dual eight core Xeon E5-2630v3 cpu's and 64 GB of memory. The nodes communicate by FDR Infiniband interconnects. Here I present the authors results and mine, as the systems and graphs used are not the same we focus on the ratios between the results. Here we present the two replicated experiments separately before drawing a general conclusion in the next section, \cref{conclusion}.
 
 \subsection{PageRank}
 
-The single threaded \textit{Rust} implementation run time is shown in \cref{tab:rust_pagerank} below it we see the original results in table \cref{tab:rust_paper_pagerank}. Then in \cref{fig:pagerank} we see the results of processing the graphs using spark. Note that graph \textit{graph500-25} is missing here, it could not be ran within the available 15 minutes compute time on the das5. 
+The single threaded implementation run time is shown in \cref{tab:rust_pagerank} we see the original papers results in table \cref{tab:rust_paper_pagerank}. In \cref{fig:pagerank} we see the results of using \textit{GraphX}. The lowest runtime for \textit{wiki-Talk}, \textit{dota-league} and \textit{datagen-8\_0-fb} are 33, 39 and 70 seconds respectively. Comparing that to the single threaded performance at 1.7, 10.6 and 31.3 seconds that means the latter is 19, 3.6 and 2.3 times faster. Note that graph \textit{graph500-25} is missing here, it could not be processed within the available 15 minutes compute time. 
 
 \ctable[
-	caption = My results for the single threaded Rust PageRank implementation ran 4 times on a Das5 compute node,
-	label = tab:rust_pagerank,
+	caption = Conversion time in seconds for the various tested graphs in seconds, 
+	label = graphconversion,
 	pos = h,
-]{llcccc}{}
+]{llccc}{}
 {
 \FL
-Graph Order & Source & \multicolumn{4}{c}{Mean Runtime $\pm$ standard deviation (s)}  \ML
-            &        & wiki-Talk & dota-league & datagen-8\_0-fb & graph500-25 \ML
-Vertex      & Ram    & 0.94 $\pm$ 0.06 & 4.93 $\pm$ 0.25   & 17.79 $\pm$ 2.39     & 141.81 $\pm$ 35.40   \NN
-            & SSD    & 0.92 $\pm$ 0.05 & 4.98 $\pm$ 0.30   & 17.98 $\pm$ 2.28     & 142.83 $\pm$ 35.64   \NN
-Hilbert     & Ram    & 0.61 $\pm$ 0.00 & 3.81 $\pm$ 0.16   & 8.63 $\pm$ 0.32      & 56.15 $\pm$ 2.60   \NN
-            & SSD    & 0.60 $\pm$ 0.00 & 3.98 $\pm$ 0.30   & 8.90 $\pm$ 0.33      & 57.82 $\pm$ 2.75   \NN
+			       & wiki-Talk & dota-league & datagen-8\_0-fb & graph500-25 \ML
+edgelist to vertex & 0.73      & 5.68  & 13.50     & 68.66 \NN
+vertex to hilbert  & 0.75      & 8.09  & 16.17     & 95.21 \NN
+total              & 1.48 & 50,870,313  & 107,507,376     & 523,602,831 \NN
+}
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{pagerank}
+  \caption{Runtime of the Spark static \textit{Pagerank} method against number of cores for three different graphs. Pagerank was ran for 20 iterations. Individual run times are indicated with dots.}
+  \label{fig:pagerank}
+\end{figure}
+
+\ctable[
+	caption = My results timing the single threaded Rust PageRank implementation for four runs on a Das5 compute node,
+	maxwidth = 160mm,
+	label = tab:rust_pagerank,
+	pos = h,
+]{>{\raggedright}Xl>{\raggedright}Xlcccc}{}
+{
+\FL
+Graph Order                         & Source      & \multicolumn{4}{c}{Mean Runtime $\pm$ standard deviation (s)}  \ML
+                                    &             & wiki-Talk & dota-league & datagen-8\_0-fb & graph500-25 \ML
+Vertex                              & Ram         & 0.94 $\pm$ 0.06 & 4.93 $\pm$ 0.25   & 17.79 $\pm$ 2.39     & 141.81 $\pm$ 35.40 \NN
+                                    & SSD         & 0.92 $\pm$ 0.05 & 4.98 $\pm$ 0.30   & 17.98 $\pm$ 2.28     & 142.83 $\pm$ 35.64 \NN
+Hilbert                             & Ram         & 0.61 $\pm$ 0.00 & 3.81 $\pm$ 0.16   & 8.63 $\pm$ 0.32      & 56.15 $\pm$ 2.60   \NN
+                                    & SSD         & 0.60 $\pm$ 0.00 & 3.98 $\pm$ 0.30   & 8.90 $\pm$ 0.33      & 57.82 $\pm$ 2.75   \NN
+\ML
+Minimum including conversion        & SSD         & 1.67            & 10.61             & 31.29                & 221.7              \NN
+Graph Order                      	&  -          & Vertex          & Vertex            & Vertex               & Hilbert            \NN
 }
 
 \ctable[
-	caption = The papers results for the single threaded Rust PageRank implementation, 
+	caption = The papers timing results for the single threaded Rust PageRank implementation, 
 	label = tab:rust_paper_pagerank,
 	pos = h,
 ]{llcc}{}

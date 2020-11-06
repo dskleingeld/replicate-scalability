@@ -1,0 +1,13 @@
+In the COST paper the authors show it is important to compare a parallel solution to the fastest purpose-build single-threaded implementation. Here I have attempted to reproduce part of their experiments, comparing \textit{PageRank} and \textit{Label Propagation} on the GraphX platform to their custom implementation.
+
+If we look at their custom implementation \cref{tab:rust_pagerank} we might think reordering the graphs is useless since it takes a lot of additional time. However we need to realise that here we are reading from disk three times (two conversions + one actual pagerank execution) and writing twice. This could be optimized to reading only once or if more operations on the graphs from \textit{Hilbert} order are needed this cost could be spread out across those operations. Note that even with all this extra work doing all conversions saves us time for the graph: \textit{graph500-25}.
+
+For the graphs that could successfully run using spark we have to conclude the cost seems infinite. I tried running with a higher core count as extrapolation would suggest that GraphX might beat the single threaded solution at 512 cores however this would not run due to very high memory requirements. We do see that the larger the dataset is the more it gains from parallism. 
+
+My GraphX Label Propagation implementation would not run on number of cores within a reasonable time. It was tested with trivial trial graphs and found to be bizarly slow but functional. I might have made a mistake in setting this up or the used version of GraphX might not ship with a (fast enough) working Label Propagation function. 
+
+Comparing to the results found by the authors \cite{189908} our distributed systems run even slower. They found that only their largest graph with 500 times more edges then the largest graph I tried allowed GraphX to finish faster. The first experiment seems reproduced. The second however is not as Label Propagation was to slow to even finish. This does not mean the authors result do not stand it does indicate something was wrong with the implementation of the experiments performed by me.
+
+There are a number of ways my work could be improved. The GraphX implantation could be sped up using a binary edgelist or even a webgraph compression\cite{webgraph} instead of the current ASCII encoded one. I have doubts on the reliability of the IO-time measurements, these are based on some assumptions about the inner workings of the authors implementation that might not be valid. An finally the graph order conversion should be integrated in the measurements to prevent unnecessary reads and writes to disk.
+
+-graphX and Spark versions!!!  Scala and Java too if we can
