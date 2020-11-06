@@ -25,6 +25,7 @@ function min()
 }
 
 # https://stackoverflow.com/questions/24622108/apache-spark-the-number-of-cores-vs-the-number-of-executors
+
 function submit()
 {
 	log4j_setting="-Dlog4j.configuration=file:${PWD}/log4j.properties"
@@ -35,7 +36,8 @@ function submit()
 	cores_per_node=$(min $total_cores $CORES_PER_NODE)
 	# use u32 edge list as its smaller then the original and
 	# we do not want to give spark a disadvantage
-	dataset=/local/$USER/$3.u32e
+	workers=$3
+	dataset=/local/$USER/$4.u32e
 	echo "
 { /usr/bin/time -f %e \
 bash ${PWD}/dependencies/spark/bin/spark-submit \
@@ -44,12 +46,12 @@ bash ${PWD}/dependencies/spark/bin/spark-submit \
 	--master ${spark_url} \
 	--deploy-mode client \
 	--supervise \
-	--num-executors 1000 \
+	--num-executors ${workers} \
 	--total-executor-cores ${total_cores} \
 	--executor-memory ${MEMORY_PER_NODE} \
 	--executor-cores ${cores_per_node} \
 	--driver-cores 3 \
-	--driver-memory 4G \
+	--driver-memory 48G \
 	--driver-java-options "${log4j_setting}" \
 	--conf "spark.executor.extraJavaOptions=${log4j_setting}" \
 	"${PWD}/${JAR}" \
@@ -68,7 +70,7 @@ function div_round_up()
 
 date >> experiments/pagerank/scalable-stats.txt
 DATASETS=( "$@" ) #turn args into array
-TOTAL_CORES=( 2 4 8 16 32 64 128 256 )
+TOTAL_CORES=( 2 4 8 16 32 64 128 256 512 )
 for dataset in ${DATASETS[@]}
 do
 	for total_cores in ${TOTAL_CORES[@]}
@@ -97,7 +99,8 @@ do
 		wait #wait until (subshells) ssh jobs are done
 
 		# create commands to run on master
-		submit_cmd=$(submit $spark_url $total_cores $dataset)
+		numb_workers=$(expr $nodes - 1)
+		submit_cmd=$(submit $spark_url $total_cores $numb_workers $dataset)
 
 		out=$(ssh $main -t "$submit_cmd")
 		echo dataset: $dataset >> experiments/pagerank/scalable-stats.txt

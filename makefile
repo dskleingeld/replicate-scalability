@@ -20,7 +20,7 @@ export CARGO_HOME=${PWD}/tmp/cargo
 
 # note: adding twitter_mpi causes quota exceeded (uses > 100Gb)
 # note: adding graph500-25 already causes no space left on device during runs
-DATASETS= wiki-Talk dota-league datagen-8_0-fb graph500-25 #twitter_mpi 
+DATASETS= wiki-Talk dota-league datagen-8_0-fb #graph500-25 #twitter_mpi 
 # DATASETS= datagen-8_0-fb #graph500-25 #twitter_mpi 
 DATA=$(addprefix data/, ${DATASETS})
 
@@ -139,9 +139,9 @@ stats: src/rust/stats
 stats: data/datagen-7_7-zf.nodes
 	src/rust/stats vertex data/datagen-7_7-zf
 
-cost: experiments/label_prop/single-threaded.csv
+# cost: experiments/label_prop/single-threaded.csv
 # cost: experiments/pagerank/single-threaded.csv 
-# cost: experiments/pagerank/scalable.csv
+cost: experiments/pagerank/scalable.csv
 
 experiments/pagerank/single-threaded.csv: $(addsuffix .upper, ${DATA})
 experiments/pagerank/single-threaded.csv: $(addsuffix .nodes, ${DATA})

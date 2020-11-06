@@ -35,7 +35,8 @@ function submit()
 	cores_per_node=$(min $total_cores $CORES_PER_NODE)
 	# use u32 edge list as its smaller then the original and
 	# we do not want to give spark a disadvantage
-	dataset=/local/$USER/$3.u32e
+	workers=$3
+	dataset=/local/$USER/$4.u32e
 	echo "
 { /usr/bin/time -f %e \
 bash ${PWD}/dependencies/spark/bin/spark-submit \
@@ -44,7 +45,7 @@ bash ${PWD}/dependencies/spark/bin/spark-submit \
 	--master ${spark_url} \
 	--deploy-mode client \
 	--supervise \
-	--num-executors ${total_cores} \
+	--num-executors ${workers} \
 	--total-executor-cores ${total_cores} \
 	--executor-memory ${MEMORY_PER_NODE} \
 	--executor-cores ${cores_per_node} \
@@ -97,7 +98,8 @@ do
 		wait #wait until (subshells) ssh jobs are done
 
 		# create commands to run on master
-		submit_cmd=$(submit $spark_url $total_cores $dataset)
+		numb_workers=$(expr $nodes - 1)
+		submit_cmd=$(submit $spark_url $total_cores $numb_workers $dataset)
 
 		out=$(ssh $main -t "$submit_cmd")
 		echo dataset: $dataset >> experiments/label_prop/scalable-stats.txt
