@@ -1,18 +1,18 @@
-Here we look closer at the \textit{PageRank} and \todo{other} experiment, first we detail the authors work before proposing an alternative approach.
+Here we look closer at the \textit{PageRank} and \textit{Label propagation} experiment, first we detail the authors work then expand on my implementation before dicussing the extensions to their work I apply.
 
 \subsection{Original Design} \label{sec:hilbert}
-To determine the \textit{COST} a best in class single threaded implementation is needed. The authors wrote their own implementation for both experiments in \textit{Rust}. Their implementation initially loaded the graphs edges in vertex order, loading all edges for one vertex before moving to the next. \textit{GraphLab} and \textit{GraphX} save on data exchange by partition the edges between workers without this requirement \cite{graphlab,graphx}. To remove this disadvantage they wrote a second implementation was tested where the edges are pre ordered using Hilbert order improving cache coherency. They report the run time for both vertex orders.
+To determine the \textit{COST} a best in class single threaded implementation is needed. The authors wrote their own implementation for both experiments in \textit{Rust}. Their implementation initially loaded the graphs edges in vertex order, loading all edges for one vertex before moving to the next. \textit{GraphLab} and \textit{GraphX} save on data exchange by partition the edges between workers without this requirement \cite{graphlab,graphx}. To remove this disadvantage they wrote and tested a second implementation where the edges are pre ordered using Hilbert order improving cache coherency. They report the run time for both vertex orders.
 
 Both experiments where originally ran on two graphs, \textit{twitter\_rv} \cite{twitter} and \textit{uk-2007-05} \cite{uk2007}. For ease of replication I deviate and run on different graphs.
 
 \subsection{Implementation} \label{sec:hilbert}
 \subsubsection{PageRank}
-The pagerank algorithm iteratively updates a rank for each vertex in a directed graph. Each iteration the rank is divided between a vertex neighbours. Then the vertex rank is updated to the sum of its neighbours with a dampening factor applied. It was the originally algorithm used by Google to rank a websites significance. For this experiment I use the authors \textit{PageRank} implementation for the single threaded pagerank. For \textit{GraphX} a slightly modified version of the pagerank example\footnote{https://github.com/apache/spark/blob/master/examples/src/main/scala/org/apache/spark /examples/graphx/PageRankExample.scala} in scala is used. We remove all operations after the call to \textit{pageRank} and we replace that call to \textit{staticPageRank} with 20 iterations as the argument to match the authors rust implementation.
+The pagerank algorithm works by iteratively updating a rank for each vertex in a directed graph. Each iteration the rank is divided between a vertex neighbours. Then the vertex rank is updated to the sum of its neighbours with a dampening factor applied. It was the originally algorithm used by Google to rank a websites significance. For this experiment I use the authors \textit{PageRank} implementation for the single threaded part. For \textit{GraphX} a slightly modified version of the \textit{GraphX} pagerank example\footnote{https://github.com/apache/spark/blob/master/examples/src/main/scala/org/apache/spark /examples/graphx/PageRankExample.scala} written in scala is used. I remove all operations after the call to \textit{pageRank} and replace the \textit{pageRank} call with \textit{staticPageRank} given the argument to perform 20 iterations to match the authors single threaded implementation.
 
 \subsubsection{Label Propagation}
-In distributed computing label propagation is often used to find connected components. Each individual vertex gets a label then it is iteratively updated. Each update the label is set to the minimum of all the neighbours and itself. Eventually all components have the smallest label of that component. For the single threaded part of this experiment I use the authors code unmodified. For \textit{GraphX} there is no label propagation example there is however a label propagation function a member of the \textit{graph class}. From this function I wrote the basic implementation in \cref{lst:labelprop}. The part after line 22 was added to verify correctness versus the authors implementation.
+In distributed computing label propagation is often used to find connected components. Each individual vertex gets a label then it is iteratively updated. Each update the label is set to the minimum of all the neighbours and itself. Eventually all components have the smallest label of that component. For the single threaded part of this experiment I use the authors code unmodified. For \textit{GraphX} there is no label propagation example there is however a label propagation function a member of the \textit{graph class}. Using this function I wrote the basic implementation seen in listing \ref{labelprop}. The part after line 22 was added to verify correctness versus the authors implementation.
 
-\begin{lstlisting}[caption={Scala Label Propagation for spark},language=Scala,numbers=left,breaklines=true, label={lst:labelprop}]
+\begin{lstlisting}[caption={Scala Label Propagation for spark},language=Scala,numbers=left,breaklines=true, label={labelprop}]
 import org.apache.spark.graphx.GraphLoader
 import org.apache.spark.graphx.lib.LabelPropagation
 import org.apache.spark.sql.SparkSession
@@ -46,11 +46,10 @@ object LabelProp {
 }
 \end{lstlisting}
 
-\subsection{Spark}
-A standalone version of Spark was placed into a folder accessible to each compute node. Then using the, by Spark provided, submit script the master and driver are started. The script automatically sets up all the workers from a file of ips provided in the Spark config directory, called 'slaves'. Via the command line arguments of the spark submit script we can control:
+\subsection{GraphX}
+To use GraphX we need a Spark cluster since Spark contains GraphX and GraphX runs on Spark. TO build this cluster a standalone version of Spark was placed into a folder accessible to each compute node. Then using the, by Spark provided, submit script the master and driver are started. The script automatically sets up all the workers from a file of ips provided in the Spark config directory, called 'slaves'.
 
-
-Before deployment the needed data is moved to high speed ssd storage for the workers and driver. We vary the values determining the parallism only the memory is set to a fixed amount. The variables set (excluding which program to run and the master node url):
+We vary the values determining the parallism only the memory is set to a fixed amount. The variables set (excluding which program to run and the master node url):
 
 \begin{multicols}{2}
 \begin{enumerate}
@@ -63,9 +62,10 @@ Before deployment the needed data is moved to high speed ssd storage for the wor
 \end{enumerate}
 \end{multicols}
 
-The number of executors is locked to the total number of cores in use, allow spark itself to determine the needed parallism. The number of cores is varyed from 2 to 256.
+The number of executors is locked to the total number of cores in use, allow spark itself to determine the needed parallism. The number of cores is varyed from 2 to 256. Before deployment the needed data is moved to high speed ssd storage on the workers and driver. 
+Allocating nodes, moving the data and submitting the program via the spark submit script while timing its run is done through various shell scripts detailed in \cref{sec:howToRun}.
 
 \subsection{Extension}
-The exact configuration of the platforms or the specification on which either parallel or single-threaded implementations where run are unknown. This could be an issue as the cores on which the single threaded code is ran could be significantly slower or faster then the used cluster. Here I run the single-threaded code on one of the compute nodes of the cluster on which \textit{GraphX} is run. The full specification of the used system is reported in \cref{res}.
+The exact configuration of the platforms or the specification on which either parallel or single-threaded implementations where tested are unknown. This could be an issue as the cores on which the single threaded code was timed could be significantly slower or faster then the used cluster. The authors must have done this to illustrate how a laptop can be faster then a distributed solution for some problems and care must be taken. Here I adress this by running the single-threaded code on one of the compute nodes part of the cluster on which \textit{GraphX} is run. The full specification of the used system is reported in \cref{res}.
 
 As described in \cref{sec:hilbert} the authors converted the vertex order before starting running one variant of their implementation. The conversion time is mentioned in the paper for the smaller of the graphs. For completion we include the conversion time for all the graphs. Further more it is unclear if measured times are averages or single data points, I try to improve upon this by running the experiments multiple times and reporting the standard deviation.
